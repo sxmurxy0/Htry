@@ -1,18 +1,18 @@
 from PyQt6.QtWidgets import QWidget, QFrame, QHBoxLayout, QPushButton, QMenu
 from PyQt6.QtGui import QAction, QKeySequence
 from widgets import utility
-from resources_provider import Icons
-import resources_provider
+from resources.icons import Icons
+from resources import resource_provider
 from binder import Binder
 
 class QMenuPanel(QFrame):
 
     def __init__(self, parent: QWidget, binder: Binder) -> None:
         super().__init__(parent)
-
+        
         self.setFixedHeight(40)
-        self.setStyleSheet(resources_provider.getStyleSheet("menu_panel"))
-
+        self.setStyleSheet(resource_provider.getStyleSheet("menu_panel"))
+        
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(4)
@@ -34,7 +34,7 @@ class QMenuPanel(QFrame):
         utility.addVerticalSeparator(widget = self, height = 22)
 
         self.save_button = QPushButton(parent = self, 
-            icon = resources_provider.getIcon(Icons.SAVE))
+            icon = resource_provider.getIcon(Icons.SAVE))
         self.save_button.clicked.connect(binder.save_binding.emit)
         self.save_button.setToolTip("Сохранить")
         self.layout().addWidget(self.save_button)
@@ -42,13 +42,13 @@ class QMenuPanel(QFrame):
         utility.addVerticalSeparator(widget = self, height = 22)
 
         self.undo_button = QPushButton(parent = self, 
-            icon = resources_provider.getIcon(Icons.UNDO))
+            icon = resource_provider.getIcon(Icons.UNDO))
         self.undo_button.setShortcut(QKeySequence("Ctrl+Z"))
         self.undo_button.clicked.connect(binder.undo_binding.emit)
         self.layout().addWidget(self.undo_button)
 
         self.redo_button = QPushButton(parent = self, 
-            icon = resources_provider.getIcon(Icons.REDO))
+            icon = resource_provider.getIcon(Icons.REDO))
         self.redo_button.setShortcut(QKeySequence("Ctrl+Y"))
         self.redo_button.clicked.connect(binder.redo_binding.emit)
         self.layout().addWidget(self.redo_button)
@@ -58,26 +58,26 @@ class QMenuPanel(QFrame):
         utility.setMenuAttributes(file_menu)
 
         create_action = QAction(parent = file_menu, text = "Создать", 
-            icon = resources_provider.getIcon(Icons.FILE))
+            icon = resource_provider.getIcon(Icons.FILE))
         create_action.setShortcut(QKeySequence("Ctrl+N"))
         create_action.triggered.connect(binder.create_binding.emit)
 
         open_action = QAction(parent = file_menu, text = "Открыть", 
-            icon = resources_provider.getIcon(Icons.FOLDER))
+            icon = resource_provider.getIcon(Icons.FOLDER))
         open_action.setShortcut(QKeySequence("Ctrl+O"))
         open_action.triggered.connect(binder.open_binding.emit)
 
         save_action = QAction(parent = file_menu, text = "Сохранить", 
-            icon = resources_provider.getIcon(Icons.SAVE))
+            icon = resource_provider.getIcon(Icons.SAVE))
         save_action.setShortcut(QKeySequence("Ctrl+S"))
         save_action.triggered.connect(binder.save_binding.emit)
 
         save_as_action = QAction(parent = file_menu, text = "Сохранить как", 
-            icon = resources_provider.getIcon(Icons.SAVE_AS))
+            icon = resource_provider.getIcon(Icons.SAVE_AS))
         save_as_action.triggered.connect(binder.save_as_binding.emit)
 
         close_action = QAction(parent = file_menu, text = "Выйти", 
-            icon = resources_provider.getIcon(Icons.CROSS))
+            icon = resource_provider.getIcon(Icons.CROSS))
         close_action.setShortcut(QKeySequence("Ctrl+Q"))
         close_action.triggered.connect(binder.close_binding.emit) 
 
@@ -92,17 +92,17 @@ class QMenuPanel(QFrame):
         utility.setMenuAttributes(edit_menu)
 
         cut_action = QAction(parent = edit_menu, text = "Вырезать", 
-            icon = resources_provider.getIcon(Icons.SCISSORS))
+            icon = resource_provider.getIcon(Icons.SCISSORS))
         cut_action.setShortcut(QKeySequence("Ctrl+X"))
         cut_action.triggered.connect(binder.cut_binding)
 
         copy_action = QAction(parent = edit_menu, text = "Копировать", 
-            icon = resources_provider.getIcon(Icons.COPY))
+            icon = resource_provider.getIcon(Icons.COPY))
         copy_action.setShortcut(QKeySequence("Ctrl+C"))
         copy_action.triggered.connect(binder.copy_binding.emit)
 
         paste_action = QAction(parent = edit_menu, text = "Вставить", 
-            icon = resources_provider.getIcon(Icons.PASTE))
+            icon = resource_provider.getIcon(Icons.PASTE))
         paste_action.setShortcut(QKeySequence("Ctrl+V"))
         paste_action.triggered.connect(binder.paste_binding.emit)
 

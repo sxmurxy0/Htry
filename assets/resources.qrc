@@ -1,5 +1,9 @@
 <RCC>
   <qresource>
+    <file>icons/align_center.png</file>
+    <file>icons/align_justify.png</file>
+    <file>icons/align_left.png</file>
+    <file>icons/align_right.png</file>
     <file>fonts/Malgun_Gothic.ttf</file>
     <file>styles/common.qss</file>
     <file>styles/window.qss</file>
@@ -29,6 +33,6 @@
     <file>icons/save.png</file>
     <file>icons/spacing.png</file>
     <file>icons/strikethrough.png</file>
-    <file>icons/underlined.png</file>
+    <file>icons/underline.png</file>
   </qresource>
 </RCC>
