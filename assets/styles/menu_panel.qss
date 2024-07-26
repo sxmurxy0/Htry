@@ -1,0 +1,19 @@
+QMenuPanel {
+	padding-left: 5px;
+}
+
+QPushButton {
+	height: 31px;
+	font-size: 10.5pt;
+	border-radius: 5px;
+	padding: 0px 10px 0px 9px;
+}
+
+QPushButton:hover, QPushButton:open {
+	background-color: #ebe9f0;
+}
+
+QPushButton::menu-indicator {
+	width: 0px;
+	height: 0px;
+}

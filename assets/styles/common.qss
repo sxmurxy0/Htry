@@ -1,0 +1,95 @@
+* {
+    font-family: "Malgun Gothic";
+    font-weight: 500;
+	color: #000000;
+}
+
+QVerticalSeparator {
+	background-color: #e0dde8;
+}
+
+QMenu {
+	font-size: 10.5pt;
+	background-color: #f9f8fc;
+	border: 1px solid #e6e3ed;
+	border-radius: 8px;
+	padding: 5px;
+}
+
+QMenu::item {
+	min-width: 160px;
+	border-radius: 5px;
+	padding: 6px 6px 6px 12px;
+}
+
+QMenu::item:selected {
+	background-color: #eeedf1;
+}
+
+QMenu::icon {
+	padding-left: 15px;
+}
+
+QMenu::separator {
+    height: 1px;
+	background-color: #e6e3ed;
+	border: none;
+	margin: 4px 0px 4px 0px;
+}
+
+QFontComboBox, QSpinBox {
+    font-size: 10.5pt;
+	background-color: #fefdfe;
+	color: #000000;
+	border: 1px solid #e6e3ed;
+	border-radius: 4px;
+	selection-background-color: #e9e9e9;
+	selection-color: #000000;
+}
+
+QFontComboBox:hover, QSpinBox:hover {
+	background-color: #f9f9fa;
+}
+
+QFontComboBox:focus, QSpinBox:focus {
+	background-color: #fefdfe;
+	border-bottom: 1px solid #d2d1d3;
+}
+
+QFontComboBox::drop-down {
+	image: url(":icons/search.png");
+	width: 10px;
+	height: 10px;
+	border-radius: 3px;
+	padding: 5px;
+	margin: 3px;
+}
+
+QSpinBox::up-button {
+	image: url(":icons/arrow_up.png");
+	margin-top: 1px;
+}
+
+QSpinBox::down-button {
+	image: url(":icons/arrow_down.png");
+	margin-bottom: 1px;
+}
+
+QSpinBox::up-button, QSpinBox::down-button {
+	border-radius: 2px;
+	margin-right: 1px;
+}
+
+QFontComboBox::drop-down:hover, QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+	background-color: #ebebeb;
+}
+
+QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical {
+	image: none;
+}
+
+QScrollBar::handle:vertical {
+	background-color: #b2b0b1;
+	border-radius: 3px;
+	margin: 5px 6px 5px 4px;
+}

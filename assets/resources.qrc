@@ -1,0 +1,34 @@
+<RCC>
+  <qresource>
+    <file>fonts/Malgun_Gothic.ttf</file>
+    <file>styles/common.qss</file>
+    <file>styles/window.qss</file>
+    <file>styles/menu_panel.qss</file>
+    <file>styles/hotbar.qss</file>
+    <file>styles/scroll_area.qss</file>
+    <file>icons/search.png</file>
+    <file>icons/undo.png</file>
+    <file>icons/redo.png</file>
+    <file>icons/copy.png</file>
+    <file>icons/scissors.png</file>
+    <file>icons/paste.png</file>
+    <file>icons/picture.png</file>
+    <file>icons/arrow_down.png</file>
+    <file>icons/logo.png</file>
+    <file>icons/cross.png</file>
+    <file>icons/file.png</file>
+    <file>icons/folder.png</file>
+    <file>icons/save_as.png</file>
+    <file>icons/arrow_up.png</file>
+    <file>icons/bold.png</file>
+    <file>icons/filling.png</file>
+    <file>icons/indentation.png</file>
+    <file>icons/italic.png</file>
+    <file>icons/link.png</file>
+    <file>icons/picker.png</file>
+    <file>icons/save.png</file>
+    <file>icons/spacing.png</file>
+    <file>icons/strikethrough.png</file>
+    <file>icons/underlined.png</file>
+  </qresource>
+</RCC>

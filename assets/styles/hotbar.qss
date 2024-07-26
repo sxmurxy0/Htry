@@ -1,0 +1,24 @@
+QHotbar {
+	background-color: #faf9fc;
+	border-top: 1px solid #e6e3ed;
+	border-bottom: 1px solid #e6e3ed;
+}
+
+QLabel {
+	font-size: 10pt;
+	color: #5f5f60;
+}
+
+QPushButton {
+	background-color: transparent;
+	border-radius: 5px;
+}
+
+QPushButton:hover {
+	background-color: #efeff0;
+}
+
+QPushButton:checked {
+	background-color: #efeff0;
+	border: 1px solid #d2d1d3;
+}
