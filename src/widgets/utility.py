@@ -1,5 +1,5 @@
-from PyQt6.QtWidgets import QWidget, QFrame, QMenu, QSpacerItem, QSizePolicy
-from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QWidget, QFrame, QMenu, QSpacerItem, QSizePolicy, QPushButton
+from PyQt6.QtCore import Qt, QSize
 
 class QVerticalSeparator(QFrame):
     
@@ -20,3 +20,8 @@ def setMenuAttributes(menu: QMenu) -> None:
     menu.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
     menu.setWindowFlags(Qt.WindowType.Popup | Qt.WindowType.FramelessWindowHint 
         | Qt.WindowType.NoDropShadowWindowHint)
+
+def setButtonParameters(button: QPushButton, width, height, icon_width, icon_height, checkable = False) -> None:
+    button.setFixedSize(width, height)
+    button.setIconSize(QSize(icon_width, icon_height))
+    button.setCheckable(checkable)

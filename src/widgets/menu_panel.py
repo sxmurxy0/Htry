@@ -55,17 +55,18 @@ class QMenuPanel(QFrame):
 
     def setupFileMenu(self, binder: Binder) -> None:
         file_menu = QMenu(self)
+        
         utility.setMenuAttributes(file_menu)
 
         create_action = QAction(parent = file_menu, text = "Создать", 
             icon = resource_provider.getIcon(Icons.FILE))
         create_action.setShortcut(QKeySequence("Ctrl+N"))
-        create_action.triggered.connect(binder.create_binding.emit)
+        create_action.triggered.connect(binder.create_document_binding.emit)
 
         open_action = QAction(parent = file_menu, text = "Открыть", 
             icon = resource_provider.getIcon(Icons.FOLDER))
         open_action.setShortcut(QKeySequence("Ctrl+O"))
-        open_action.triggered.connect(binder.open_binding.emit)
+        open_action.triggered.connect(binder.open_document_binding.emit)
 
         save_action = QAction(parent = file_menu, text = "Сохранить", 
             icon = resource_provider.getIcon(Icons.SAVE))
