@@ -21,7 +21,8 @@ def setMenuAttributes(menu: QMenu) -> None:
     menu.setWindowFlags(Qt.WindowType.Popup | Qt.WindowType.FramelessWindowHint 
         | Qt.WindowType.NoDropShadowWindowHint)
 
-def setButtonParameters(button: QPushButton, width, height, icon_width, icon_height, checkable = False) -> None:
+def setButtonParameters(button: QPushButton, width: int, height: int,
+        icon_width: int, icon_height: int, checkable: bool = False) -> None:
     button.setFixedSize(width, height)
     button.setIconSize(QSize(icon_width, icon_height))
     button.setCheckable(checkable)

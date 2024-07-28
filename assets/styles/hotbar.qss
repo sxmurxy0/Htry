@@ -12,6 +12,7 @@ QLabel {
 QPushButton {
 	background-color: transparent;
 	border-radius: 5px;
+	padding: 0px;
 }
 
 QPushButton:hover {
@@ -19,6 +20,5 @@ QPushButton:hover {
 }
 
 QPushButton:checked {
-	background-color: #efeff0;
-	border: 1px solid #d2d1d3;
+	background-color: #e9e9ea;
 }

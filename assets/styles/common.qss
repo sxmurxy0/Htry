@@ -84,6 +84,10 @@ QFontComboBox::drop-down:hover, QSpinBox::up-button:hover, QSpinBox::down-button
 	background-color: #ebebeb;
 }
 
+QScrollBar:vertical {
+	background-color: transparent;
+}
+
 QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical {
 	image: none;
 }
@@ -92,4 +96,13 @@ QScrollBar::handle:vertical {
 	background-color: #b2b0b1;
 	border-radius: 3px;
 	margin: 5px 6px 5px 4px;
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+	background: none;
+}
+
+QDocumentEditor {
+	background-color: transparent;
+	border: none;
 }

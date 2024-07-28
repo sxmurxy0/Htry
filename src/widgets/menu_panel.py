@@ -13,7 +13,7 @@ class QMenuPanel(QFrame):
         self.setFixedHeight(40)
         self.setStyleSheet(resource_provider.getStyleSheet("menu_panel"))
         
-        layout = QHBoxLayout(self)
+        layout = QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(4)
         self.setLayout(layout)

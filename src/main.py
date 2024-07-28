@@ -5,10 +5,11 @@ from resources import resource_provider
 import sys, resources.data
 
 if __name__ == "__main__":
-    application = QApplication(sys.argv)
     
-    QFontDatabase.addApplicationFont(":fonts/Malgun_Gothic.ttf")
+    application = QApplication(sys.argv + ["-platform", "windows:darkmode=2", "-style", "windows"])
     application.setStyleSheet(resource_provider.getStyleSheet("common"))
+
+    QFontDatabase.addApplicationFont(":fonts/Malgun_Gothic.ttf")
 
     window = QWindow()
     window.setup()

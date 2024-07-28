@@ -1,4 +1,5 @@
-from PyQt6.QtWidgets import QWidget, QFrame, QHBoxLayout, QGridLayout, QFontComboBox, QSpinBox, QPushButton, QLabel, QButtonGroup
+from PyQt6.QtWidgets import (QWidget, QFrame, QHBoxLayout, QGridLayout, 
+    QFontComboBox, QSpinBox, QPushButton, QLabel, QButtonGroup)
 from PyQt6.QtCore import Qt, QSize, QObject
 from widgets import utility
 from resources.icons import Icons
@@ -14,7 +15,7 @@ class QHotbar(QFrame):
             super().__init__(parent)
 
             layout = QGridLayout(self)
-            layout.setContentsMargins(14, 13, 14, 2)
+            layout.setContentsMargins(13, 13, 14, 2)
             layout.setSpacing(8)
             layout.setVerticalSpacing(6)
             self.setLayout(layout)
@@ -37,7 +38,7 @@ class QHotbar(QFrame):
         self.setFixedHeight(76)
         self.setStyleSheet(resource_provider.getStyleSheet("hotbar"))
 
-        layout = QHBoxLayout(self)
+        layout = QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(1)
         self.setLayout(layout)
@@ -140,14 +141,14 @@ class QHotbar(QFrame):
     
     def setupAlignCategory(self, binder: Binder) -> None:
         category = QHotbar.QCategory(parent = self, title = "Выравнивание")
-        group = QButtonGroup(category)
+        category.group = QButtonGroup(category)
 
         align_left_button = QPushButton(parent = category,
             icon = resource_provider.getIcon(Icons.ALIGN_LEFT))
         align_left_button.alignment = Qt.AlignmentFlag.AlignLeft
         utility.setButtonParameters(align_left_button, width = 28, height = 28,
             icon_width = 20, icon_height = 20, checkable = True)
-        group.addButton(align_left_button)
+        category.group.addButton(align_left_button)
         category.align_left_button = align_left_button
 
         align_center_button = QPushButton(parent = category,
@@ -155,7 +156,7 @@ class QHotbar(QFrame):
         align_center_button.alignment = Qt.AlignmentFlag.AlignCenter
         utility.setButtonParameters(align_center_button, width = 28, height = 28,
             icon_width = 20, icon_height = 20, checkable = True)
-        group.addButton(align_center_button)
+        category.group.addButton(align_center_button)
         category.align_center_button = align_center_button
 
         align_right_button = QPushButton(parent = category,
@@ -163,7 +164,7 @@ class QHotbar(QFrame):
         align_right_button.alignment = Qt.AlignmentFlag.AlignRight
         utility.setButtonParameters(align_right_button, width = 28, height = 28,
             icon_width = 20, icon_height = 20, checkable = True)
-        group.addButton(align_right_button)
+        category.group.addButton(align_right_button)
         category.align_right_button = align_right_button
 
         align_justify_button = QPushButton(parent = category,
@@ -171,17 +172,18 @@ class QHotbar(QFrame):
         align_justify_button.alignment = Qt.AlignmentFlag.AlignJustify
         utility.setButtonParameters(align_justify_button, width = 28, height = 28,
             icon_width = 20, icon_height = 20, checkable = True)
-        group.addButton(align_justify_button)
+        category.group.addButton(align_justify_button)
         category.align_justify_button = align_justify_button
 
-        group.buttonClicked.connect(
+        category.group.buttonClicked.connect(
             lambda button: binder.hotbar_alignment_binding.emit(button.alignment)
         )
+        binder.cursor_alignment_binding.connect(self.handleCursorAlignment)
 
         category.addWidgets((align_left_button, align_center_button, align_right_button, align_justify_button))
 
         self.layout().addWidget(category)
-        self.align_category = category
+        self.alignment_category = category
 
         utility.addVerticalSeparator(widget = self, height = 62)
     
@@ -228,3 +230,8 @@ class QHotbar(QFrame):
         self.paragraph_category = category
         
         utility.addVerticalSeparator(widget = self, height = 62)
+    
+    def handleCursorAlignment(self, alignment: Qt.AlignmentFlag):
+        for button in self.alignment_category.group.buttons():
+            if button.alignment == alignment:
+                button.setChecked(True)
