@@ -16,13 +16,18 @@ def addHorizontalSpacer(widget: QWidget) -> None:
         hPolicy = QSizePolicy.Policy.Expanding, vPolicy = QSizePolicy.Policy.Minimum)
     widget.layout().addItem(spacer)
 
+def addVerticalSpacer(widget: QWidget) -> None:
+    spacer = QSpacerItem(0, 0,
+        hPolicy = QSizePolicy.Policy.Minimum, vPolicy = QSizePolicy.Policy.Expanding)
+    widget.layout().addItem(spacer)
+
 def setMenuAttributes(menu: QMenu) -> None:
     menu.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
     menu.setWindowFlags(Qt.WindowType.Popup | Qt.WindowType.FramelessWindowHint 
         | Qt.WindowType.NoDropShadowWindowHint)
 
 def setButtonParameters(button: QPushButton, width: int, height: int,
-        icon_width: int, icon_height: int, checkable: bool = False) -> None:
+        iconWidth: int, iconHeight: int, checkable: bool = False) -> None:
     button.setFixedSize(width, height)
-    button.setIconSize(QSize(icon_width, icon_height))
+    button.setIconSize(QSize(iconWidth, iconHeight))
     button.setCheckable(checkable)

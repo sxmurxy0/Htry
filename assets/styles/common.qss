@@ -8,6 +8,11 @@ QVerticalSeparator {
 	background-color: #e0dde8;
 }
 
+QScrollArea * {
+    background-color: transparent;
+    border: none;
+}
+
 QMenu {
 	font-size: 10.5pt;
 	background-color: #f9f8fc;

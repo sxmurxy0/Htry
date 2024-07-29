@@ -1,50 +1,62 @@
+from PyQt6.QtWidgets import QWidget
 from PyQt6.QtCore import QObject, pyqtSignal
 from PyQt6.QtGui import QFont, QColor
 from PyQt6.QtCore import Qt
 
 class Binder(QObject):
 
-    create_document_binding = pyqtSignal()
-    open_document_binding = pyqtSignal()
+    createDocumentBinding = pyqtSignal()
+    openDocumentBinding = pyqtSignal()
 
-    save_binding = pyqtSignal()
-    save_as_binding = pyqtSignal()
+    saveBinding = pyqtSignal()
+    saveAsBinding = pyqtSignal()
 
-    close_binding = pyqtSignal()
+    quitBinding = pyqtSignal()
 
-    cut_binding = pyqtSignal()
-    copy_binding = pyqtSignal()
-    paste_binding = pyqtSignal()
+    cutBinding = pyqtSignal()
+    cutAvailableBinding = pyqtSignal(bool)
 
-    undo_binding = pyqtSignal()
-    redo_binding = pyqtSignal()
+    copyBinding = pyqtSignal()
+    copyAvailableBinding = pyqtSignal(bool)
 
-    hotbar_font_binding = pyqtSignal(QFont)
-    cursor_font_binding = pyqtSignal(QFont)
+    pasteBinding = pyqtSignal()
+    pasteAvailableBinding = pyqtSignal(bool)
 
-    hotbar_font_size_binding = pyqtSignal(int)
-    cursor_font_size_binding = pyqtSignal(int)
+    undoBinding = pyqtSignal()
+    undoAvailableBinding = pyqtSignal(bool)
 
-    hotbar_bold_binding = pyqtSignal(bool)
-    cursor_bold_binding = pyqtSignal(bool)
+    redoBinding = pyqtSignal()
+    redoAvailableBinding = pyqtSignal(bool)
 
-    hotbar_italic_binding = pyqtSignal(bool)
-    cursor_italic_binding = pyqtSignal(bool)
+    hotbarFontBinding = pyqtSignal(QFont)
+    cursorFontBinding = pyqtSignal(QFont)
 
-    hotbar_underline_binding = pyqtSignal(bool)
-    cursor_underline_binding = pyqtSignal(bool)
+    hotbarFontSizeBinding = pyqtSignal(int)
+    cursorFontSizeBinding = pyqtSignal(int)
 
-    hotbar_strikethrough_binding = pyqtSignal(bool)
-    cursor_strikethrough_binding = pyqtSignal(bool)
+    hotbarBoldBinding = pyqtSignal(bool)
+    cursorBoldBinding = pyqtSignal(bool)
 
-    hotbar_text_color_binding = pyqtSignal(QColor)
-    cursor_text_color_binding = pyqtSignal(QColor)
+    hotbarItalicBinding = pyqtSignal(bool)
+    cursorItalicBinding = pyqtSignal(bool)
 
-    hotbar_bg_color_binding = pyqtSignal(QColor)
-    cursor_bg_color_binding = pyqtSignal(QColor)
+    hotbarUnderlineBinding = pyqtSignal(bool)
+    cursorUnderlineBinding = pyqtSignal(bool)
 
-    hotbar_alignment_binding = pyqtSignal(Qt.AlignmentFlag)
-    cursor_alignment_binding = pyqtSignal(Qt.AlignmentFlag)
+    hotbarStrikethroughBinding = pyqtSignal(bool)
+    cursorStrikethroughBinding = pyqtSignal(bool)
 
-    insert_picture_binding = pyqtSignal()
-    insert_link_bindng = pyqtSignal()
+    hotbarTextColorBinding = pyqtSignal(QColor)
+    cursorTextColorBinding = pyqtSignal(QColor)
+
+    hotbarBgColorBinding = pyqtSignal(QColor)
+    cursorBgColorBinding = pyqtSignal(QColor)
+
+    hotbarAlignmentBinding = pyqtSignal(Qt.AlignmentFlag)
+    cursorAlignmentBinding = pyqtSignal(Qt.AlignmentFlag)
+
+    insertPictureBinding = pyqtSignal()
+    insertLinkBindng = pyqtSignal()
+
+    def __init__(self, parent: QWidget) -> None:
+        super().__init__(parent)
