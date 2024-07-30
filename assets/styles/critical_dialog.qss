@@ -1,0 +1,24 @@
+QCriticalSavingDialog {
+	background-color: #fbfbfc;
+}
+
+QLabel {
+	font-size: 10pt;
+}
+
+QPushButton {
+	font-size: 10.5pt;
+    background-color: #fefdfe;
+	color: #000000;
+    border: 1px solid #e0dde8;
+    border-radius: 5px;
+    padding: 0px;
+}
+
+QPushButton:hover {
+    background-color: #f9f9fa;
+}
+
+QFrame#decoration {
+    background-color: #f4f2f9;
+}

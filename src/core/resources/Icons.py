@@ -29,3 +29,4 @@ class Icons(Enum):
     ALIGN_JUSTIFY = "align_justify.png"
     PICTURE = "picture.png"
     LINK = "link.png"
+    CRITICAL = "critical.png"

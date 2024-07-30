@@ -1,8 +1,9 @@
 from PyQt6.QtCore import QFile, QIODeviceBase
 from PyQt6.QtGui import QIcon, QPixmap
-from resources.Icons import *
-
+from core.resources.Icons import Icons
+        
 iconsCache = {}
+stylesCache = {}
 
 def loadIcon(fileName: str) -> QIcon:
     icon = QIcon()
@@ -24,9 +25,9 @@ def getIcon(icon: Icons) -> QIcon:
     
     return iconsCache[icon]
 
-def loadStyleSheet(identifier: str) -> str:
-    path = f"styles:{identifier}.qss"
-    print(path)
+def loadStyleSheet(fileName: str) -> str:
+    path = f"styles:{fileName}"
+    
     if not QFile.exists(path):
         return ""
 
@@ -36,3 +37,9 @@ def loadStyleSheet(identifier: str) -> str:
     file.close()
 
     return styleSheet
+
+def getStyleSheet(identifier: str) -> str:
+    if identifier not in stylesCache:
+        stylesCache[identifier] = loadStyleSheet(identifier + ".qss")
+        
+    return stylesCache[identifier]

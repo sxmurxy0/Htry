@@ -1,15 +1,13 @@
-from PyQt6.QtWidgets import QWidget
-from PyQt6.QtCore import QObject, pyqtSignal
 from PyQt6.QtGui import QFont, QColor
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QObject, pyqtSignal
 
-class Binder(QObject):
+class QBinder(QObject):
 
     createDocumentBinding = pyqtSignal()
     openDocumentBinding = pyqtSignal()
 
-    saveBinding = pyqtSignal()
-    saveAsBinding = pyqtSignal()
+    saveDocumentBinding = pyqtSignal()
+    saveDocumentAsBinding = pyqtSignal()
 
     quitBinding = pyqtSignal()
 
@@ -57,6 +55,3 @@ class Binder(QObject):
 
     insertPictureBinding = pyqtSignal()
     insertLinkBindng = pyqtSignal()
-
-    def __init__(self, parent: QWidget) -> None:
-        super().__init__(parent)
