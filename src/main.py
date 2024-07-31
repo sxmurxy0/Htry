@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtCore import QDir
 from PyQt6.QtGui import QFontDatabase
-from core.resources import QResourceProvider
+from resources.QResourceProvider import QResourceProvider
 from widgets.QWindow import QWindow
 import sys
 

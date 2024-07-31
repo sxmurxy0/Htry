@@ -6,14 +6,13 @@
 	selection-color: #000000;
 }
 
-QVerticalSeparator {
-	background-color: #e0dde8;
-}
-
-
 QScrollArea, QScrollArea * {
     background-color: transparent;
     border: none;
+}
+
+QVerticalSeparator {
+	background-color: #e0dde8;
 }
 
 QMenu {
@@ -24,18 +23,24 @@ QMenu {
 	padding: 5px;
 }
 
+QMenu::icon {
+	padding-left: 15px;
+}
+
 QMenu::item {
 	min-width: 150px;
+	background-color: transparent;
 	border-radius: 5px;
 	padding: 6px 6px 6px 12px;
 }
 
-QMenu::item:selected {
+
+QMenu::item:selected:enabled {
 	background-color: #eeedf1;
 }
 
-QMenu::icon {
-	padding-left: 15px;
+QMenu::item:disabled {
+	color: #8f8f90;
 }
 
 QMenu::separator {
@@ -45,19 +50,18 @@ QMenu::separator {
 	margin: 4px 0px 4px 0px;
 }
 
-QFontComboBox, QSpinBox {
-    font-size: 10.5pt;
+QLineEdit, QFontComboBox, QSpinBox {
+	font-size: 10.5pt;
 	background-color: #fefdfe;
-	color: #000000;
 	border: 1px solid #e6e3ed;
 	border-radius: 4px;
 }
 
-QFontComboBox:hover, QSpinBox:hover {
+QLineEdit, QFontComboBox:hover, QSpinBox:hover {
 	background-color: #f9f9fa;
 }
 
-QFontComboBox:focus, QSpinBox:focus {
+QLineEdit, QFontComboBox:focus, QSpinBox:focus {
 	background-color: #fefdfe;
 	border-bottom: 1px solid #d2d1d3;
 }
@@ -94,16 +98,13 @@ QScrollBar:vertical {
 	background-color: transparent;
 }
 
-QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical {
-	image: none;
+QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical, 
+		QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+	background: none;
 }
 
 QScrollBar::handle:vertical {
-	background-color: #b2b0b1;
+	background-color: #cccccc;
 	border-radius: 3px;
-	margin: 5px 6px 5px 4px;
-}
-
-QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
-	background: none;
+	margin: 5px 10px 5px 1px;
 }

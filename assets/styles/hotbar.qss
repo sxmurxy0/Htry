@@ -21,7 +21,7 @@ QPushButton:hover {
 
 QPushButton:checked {
 	background-color: #ececec;
-	border-bottom: 2px solid rgb(196, 196, 196);
+	border-bottom: 2px solid #c4c4c4;
 	border-bottom-left-radius: 3px;
 	border-bottom-right-radius: 3px;
 }

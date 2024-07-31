@@ -1,5 +1,6 @@
 from PyQt6.QtGui import QFont, QColor
 from PyQt6.QtCore import Qt, QObject, pyqtSignal
+from documents.QDocument import QDocument
 
 class QBinder(QObject):
 
@@ -55,3 +56,5 @@ class QBinder(QObject):
 
     insertPictureBinding = pyqtSignal()
     insertLinkBindng = pyqtSignal()
+
+    documentUpdatedBinding = pyqtSignal(QDocument)

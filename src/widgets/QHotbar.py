@@ -1,10 +1,10 @@
 from PyQt6.QtWidgets import (QWidget, QFrame, QHBoxLayout, QGridLayout,
     QFontComboBox, QSpinBox, QPushButton, QLabel, QButtonGroup)
 from PyQt6.QtCore import Qt
-from widgets import QWidgetUtility
-from core.resources.Icons import Icons
-from core.resources import QResourceProvider
-from core.QBinder import QBinder
+from widgets.QWidgetUtility import QWidgetUtility
+from resources.Icons import Icons
+from resources.QResourceProvider import QResourceProvider
+from QBinder import QBinder
 from typing import Iterable
 
 class QHotbar(QFrame):

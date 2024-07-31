@@ -1,9 +1,9 @@
 from PyQt6.QtWidgets import QWidget, QFrame, QHBoxLayout, QPushButton, QMenu
 from PyQt6.QtGui import QAction, QKeySequence
-from widgets import QWidgetUtility
-from core.resources.Icons import Icons
-from core.resources import QResourceProvider
-from core.QBinder import QBinder
+from widgets.QWidgetUtility import QWidgetUtility
+from resources.Icons import Icons
+from resources.QResourceProvider import QResourceProvider
+from QBinder import QBinder
 
 class QMenuPanel(QFrame):
 
@@ -100,7 +100,7 @@ class QMenuPanel(QFrame):
         QWidgetUtility.setMenuAttributes(editMenu)
 
         cutAction = QAction(parent = editMenu, text = "Вырезать", 
-            icon = QResourceProvider.getIcon(Icons.SCISSORS))
+            icon = QResourceProvider.getIcon(Icons.CUT))
         cutAction.setShortcut(QKeySequence("Ctrl+X"))
         cutAction.triggered.connect(binder.cutBinding.emit)
         binder.cutAvailableBinding.connect(cutAction.setEnabled)

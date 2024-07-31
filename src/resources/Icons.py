@@ -10,7 +10,7 @@ class Icons(Enum):
     SAVE = "save.png"
     SAVE_AS = "save_as.png"
     CROSS = "cross.png"
-    SCISSORS = "scissors.png"
+    CUT = "cut.png"
     COPY = "copy.png"
     PASTE = "paste.png"
     UNDO = "undo.png"
