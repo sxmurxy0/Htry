@@ -11,15 +11,21 @@ class QDocumentArchiver:
     COMPRESSION_LEVEL = 6
 
     @staticmethod
-    def fileFormat(fileName: str) -> str:
-        return fileName[fileName.rfind(".") + 1:]
+    def getFileName(filePath: str) -> str:
+        i, j = filePath.rfind("/") + 1, filePath.rfind(".")
+        return filePath[i:j]
+
+    @staticmethod
+    def getFileFormat(fileName: str) -> str:
+        i = fileName.rfind(".") + 1
+        return fileName[i:]
 
     @staticmethod
     def pixmap2ByteArray(pixmap: QPixmap, format: str) -> QByteArray:
         byteArray = QByteArray()
         buffer = QBuffer(byteArray)
         buffer.open(QIODeviceBase.OpenModeFlag.WriteOnly)
-        pixmap.save(buffer, format)
+        pixmap.save(device = buffer, format = format)
         buffer.close()
 
         return byteArray
@@ -27,42 +33,46 @@ class QDocumentArchiver:
     @staticmethod
     def byteArray2Pixmap(byteArray: QByteArray, format: str) -> QPixmap:
         pixmap = QPixmap()
-        pixmap.loadFromData(byteArray, format)
+        pixmap.loadFromData(buf = byteArray, format = format)
 
         return pixmap
 
     @staticmethod
-    def saveDocument(document: QDocument) -> None:
+    def saveDocument(filePath: str, document: QDocument) -> None:
         content = document.toHtml()
+        
+        with ZipFile(filePath, mode = "w", compression = QDocumentArchiver.COMPRESSION_TYPE,
+                compresslevel = QDocumentArchiver.COMPRESSION_LEVEL) as archive:
+            for imageFile in document.getImages():
+                hash = hashlib.sha256(imageFile.encode()).hexdigest()
+                format = QDocumentArchiver.getFileFormat(imageFile)
 
-        with ZipFile(document.filePath, mode = "w", compression = QDocumentArchiver.COMPRESSION_TYPE,
-            compresslevel = QDocumentArchiver.COMPRESSION_LEVEL) as archive:
-            for imageFile in document.images:
-                hashcode = hashlib.sha256(imageFile.encode()).hexdigest()
-                format = QDocumentArchiver.fileFormat(imageFile)
-                localFile = hashcode + format
                 pixmap = document.resource(QDocument.ResourceType.ImageResource, QUrl(imageFile))
+                byteArray = QDocumentArchiver.pixmap2ByteArray(pixmap, format)
+                archiveFile = hash + "." + format
 
-                archive.writestr(localFile, QDocumentArchiver.pixmap2ByteArray(pixmap, format))
-                content = content.replace(imageFile, localFile)
+                archive.writestr(archiveFile, byteArray)
+                content = content.replace(imageFile, archiveFile)
             
             archive.writestr(QDocumentArchiver.CONTENT_FILE_NAME, content)
     
     @staticmethod
     def readDocument(filePath: str) -> QDocument:
-        document = QDocument()
-        document.filePath = filePath
+        document = QDocument(QDocumentArchiver.getFileName(filePath))
 
         with ZipFile(filePath, mode = "r") as archive:
-            for resourceFile in archive.namelist():
-                if resourceFile == QDocumentArchiver.CONTENT_FILE_NAME:
+            for archiveFile in archive.namelist():
+                if archiveFile == QDocumentArchiver.CONTENT_FILE_NAME:
                     continue
                 
-                byteArray = QByteArray(archive.read(resourceFile))
-                format = QDocumentArchiver.fileFormat(resourceFile)
-                document.addResource(QDocument.ResourceType.ImageResource, 
-                    QUrl(resourceFile), QDocumentArchiver.byteArray2Pixmap(byteArray, format))
+                format = QDocumentArchiver.getFileFormat(archiveFile)
+                byteArray = QByteArray(archive.read(archiveFile))
+                pixmap = QDocumentArchiver.byteArray2Pixmap(byteArray, format)
+
+                document.addResource(QDocument.ResourceType.ImageResource,
+                    QUrl(archiveFile), pixmap)
             
-            document.setHtml(str(archive.read(QDocumentArchiver.CONTENT_FILE), encoding = "utf-8"))
+            content = str(archive.read(QDocumentArchiver.CONTENT_FILE_NAME), encoding = "utf-8")
+            document.setHtml(content)
         
         return document

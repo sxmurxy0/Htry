@@ -1,11 +1,18 @@
 from PyQt6.QtWidgets import QWidget, QFrame, QHBoxLayout, QPushButton, QMenu
-from PyQt6.QtGui import QAction, QKeySequence
+from PyQt6.QtGui import QIcon, QAction, QKeySequence
 from widgets.QWidgetUtility import QWidgetUtility
-from resources.Icons import Icons
+from resources.QIcons import QIcons
 from resources.QResourceProvider import QResourceProvider
 from QBinder import QBinder
 
 class QMenuPanel(QFrame):
+
+    class QMenuPanelButton(QPushButton):
+
+        def __init__(self, parent: QWidget = None, text: str = None, icon: QIcon = None) -> None:
+            super().__init__(parent = parent, text = text)
+            if icon:
+                self.setIcon(icon)
 
     def __init__(self, parent: QWidget, binder: QBinder) -> None:
         super().__init__(parent)
@@ -25,32 +32,29 @@ class QMenuPanel(QFrame):
         QWidgetUtility.addHorizontalSpacer(self)
     
     def setupButtons(self, binder: QBinder) -> None:
-        self.fileButton = QPushButton(parent = self, text = "Файл")
+        self.fileButton = QMenuPanel.QMenuPanelButton(parent = self, text = "Файл")
         self.layout().addWidget(self.fileButton)
 
-        self.editButton = QPushButton(parent = self, text = "Изменить")
+        self.editButton = QMenuPanel.QMenuPanelButton(parent = self, text = "Изменить")
         self.layout().addWidget(self.editButton)
 
         QWidgetUtility.addVerticalSeparator(widget = self, height = 22)
 
-        self.saveButton = QPushButton(parent = self, 
-            icon = QResourceProvider.getIcon(Icons.SAVE))
+        self.saveButton = QMenuPanel.QMenuPanelButton(parent = self, 
+            icon = QResourceProvider.getIcon(QIcons.SAVE))
         self.saveButton.clicked.connect(binder.saveDocumentBinding.emit)
-        self.saveButton.setToolTip("Сохранить")
         self.layout().addWidget(self.saveButton)
 
         QWidgetUtility.addVerticalSeparator(widget = self, height = 22)
 
-        self.undoButton = QPushButton(parent = self, 
-            icon = QResourceProvider.getIcon(Icons.UNDO))
-        self.undoButton.setShortcut(QKeySequence("Ctrl+Z"))
+        self.undoButton = QMenuPanel.QMenuPanelButton(parent = self, 
+            icon = QResourceProvider.getIcon(QIcons.UNDO))
         self.undoButton.clicked.connect(binder.undoBinding.emit)
         binder.undoAvailableBinding.connect(self.undoButton.setEnabled)
         self.layout().addWidget(self.undoButton)
 
-        self.redoButton = QPushButton(parent = self, 
-            icon = QResourceProvider.getIcon(Icons.REDO))
-        self.redoButton.setShortcut(QKeySequence("Ctrl+Y"))
+        self.redoButton = QMenuPanel.QMenuPanelButton(parent = self, 
+            icon = QResourceProvider.getIcon(QIcons.REDO))
         self.redoButton.clicked.connect(binder.redoBinding.emit)
         binder.redoAvailableBinding.connect(self.redoButton.setEnabled)
         self.layout().addWidget(self.redoButton)
@@ -60,31 +64,32 @@ class QMenuPanel(QFrame):
         QWidgetUtility.setMenuAttributes(fileMenu)
 
         createAction = QAction(parent = fileMenu, text = "Создать", 
-            icon = QResourceProvider.getIcon(Icons.FILE))
-        createAction.setShortcut(QKeySequence("Ctrl+N"))
+            icon = QResourceProvider.getIcon(QIcons.FILE))
+        createAction.setShortcut(QKeySequence.StandardKey.New)
         createAction.triggered.connect(binder.createDocumentBinding.emit)
         fileMenu.createAction = createAction
 
         openAction = QAction(parent = fileMenu, text = "Открыть", 
-            icon = QResourceProvider.getIcon(Icons.FOLDER))
-        openAction.setShortcut(QKeySequence("Ctrl+O"))
+            icon = QResourceProvider.getIcon(QIcons.FOLDER))
+        openAction.setShortcut(QKeySequence.StandardKey.Open)
         openAction.triggered.connect(binder.openDocumentBinding.emit)
         fileMenu.openAction = openAction
 
         saveAction = QAction(parent = fileMenu, text = "Сохранить", 
-            icon = QResourceProvider.getIcon(Icons.SAVE))
-        saveAction.setShortcut(QKeySequence("Ctrl+S"))
+            icon = QResourceProvider.getIcon(QIcons.SAVE))
+        saveAction.setShortcut(QKeySequence.StandardKey.Save)
         saveAction.triggered.connect(binder.saveDocumentBinding.emit)
         fileMenu.saveAction = saveAction
 
         saveAsAction = QAction(parent = fileMenu, text = "Сохранить как", 
-            icon = QResourceProvider.getIcon(Icons.SAVE_AS))
+            icon = QResourceProvider.getIcon(QIcons.SAVE_AS))
+        saveAsAction.setShortcut(QKeySequence.StandardKey.SaveAs)
         saveAsAction.triggered.connect(binder.saveDocumentAsBinding.emit)
         fileMenu.saveAsAction = saveAsAction
 
         quitAction = QAction(parent = fileMenu, text = "Выйти", 
-            icon = QResourceProvider.getIcon(Icons.CROSS))
-        quitAction.setShortcut(QKeySequence("Ctrl+Q"))
+            icon = QResourceProvider.getIcon(QIcons.CROSS))
+        quitAction.setShortcut(QKeySequence.StandardKey.Close)
         quitAction.triggered.connect(binder.quitBinding.emit) 
         fileMenu.quitAction = quitAction
 
@@ -100,22 +105,22 @@ class QMenuPanel(QFrame):
         QWidgetUtility.setMenuAttributes(editMenu)
 
         cutAction = QAction(parent = editMenu, text = "Вырезать", 
-            icon = QResourceProvider.getIcon(Icons.CUT))
-        cutAction.setShortcut(QKeySequence("Ctrl+X"))
+            icon = QResourceProvider.getIcon(QIcons.CUT))
+        cutAction.setShortcut(QKeySequence.StandardKey.Cut)
         cutAction.triggered.connect(binder.cutBinding.emit)
         binder.cutAvailableBinding.connect(cutAction.setEnabled)
         editMenu.cutAction = cutAction
 
         copyAction = QAction(parent = editMenu, text = "Копировать", 
-            icon = QResourceProvider.getIcon(Icons.COPY))
-        copyAction.setShortcut(QKeySequence("Ctrl+C"))
+            icon = QResourceProvider.getIcon(QIcons.COPY))
+        copyAction.setShortcut(QKeySequence.StandardKey.Copy)
         copyAction.triggered.connect(binder.copyBinding.emit)
         binder.copyAvailableBinding.connect(copyAction.setEnabled)
         editMenu.copyAction = copyAction
 
         pasteAction = QAction(parent = editMenu, text = "Вставить", 
-            icon = QResourceProvider.getIcon(Icons.PASTE))
-        pasteAction.setShortcut(QKeySequence("Ctrl+V"))
+            icon = QResourceProvider.getIcon(QIcons.PASTE))
+        pasteAction.setShortcut(QKeySequence.StandardKey.Paste)
         pasteAction.triggered.connect(binder.pasteBinding.emit)
         binder.pasteAvailableBinding.connect(pasteAction.setEnabled)
         editMenu.pasteAction = pasteAction

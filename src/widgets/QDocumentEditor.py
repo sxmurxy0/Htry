@@ -1,9 +1,10 @@
 from PyQt6.QtWidgets import QWidget, QTextEdit, QMenu
 from PyQt6.QtGui import (QTextFrameFormat, QTextImageFormat, QKeyEvent, QPaintEvent, 
-    QPainter, QPen, QBrush, QColor, QAction, QKeySequence, QFont)
-from PyQt6.QtCore import Qt, QSizeF, QPoint
+    QPainter, QPen, QBrush, QColor, QAction, QKeySequence, QFont, QPixmap)
+from PyQt6.QtCore import Qt, QSizeF, QPoint, QUrl
+from widgets.QDialogService import QDialogService
 from widgets.QWidgetUtility import QWidgetUtility
-from resources.Icons import Icons
+from resources.QIcons import QIcons
 from resources.QResourceProvider import QResourceProvider
 from documents.QDocument import QDocument
 from QBinder import QBinder
@@ -43,6 +44,8 @@ class QDocumentEditor(QTextEdit):
         binder.hotbarStrikethroughBinding.connect(self.setFontStrikethrough)
 
         binder.hotbarAlignmentBinding.connect(self.setAlignment)
+        binder.insertPictureBinding.connect(self.insertPicture)
+        binder.insertLinkBindng.connect(self.insertLink)
 
         binder.documentUpdatedBinding.connect(self.setDocument)
 
@@ -60,6 +63,32 @@ class QDocumentEditor(QTextEdit):
         font = self.currentFont()
         font.setStrikeOut(state)
         self.setCurrentFont(font)
+    
+    def insertPicture(self) -> None:
+        images = QDialogService.getImageFiles()
+        for imageFile in images:
+            imageUrl = QUrl(imageFile)
+
+            pixmap = QPixmap(imageUrl.toString())
+            self.document().addResource(QDocument.ResourceType.ImageResource,
+                imageUrl, pixmap)
+
+            format = QTextImageFormat()
+            format.setWidth(200)
+            format.setHeight(200)
+            format.setName(imageUrl.toString())
+            self.textCursor().insertImage(format)
+            
+    
+    def insertLink(self) -> None:
+        title = self.textCursor().selectedText()
+        data = QDialogService.getLinkInsertionData(title)
+        
+        if data and data[0]:
+            format = self.currentCharFormat()
+            format.setAnchor(True)
+            format.setAnchorHref(data[1])
+            self.textCursor().insertText(data[0], format)
     
     def updateHotbarState(self) -> None:
         self.blockSignals(True)
@@ -90,6 +119,7 @@ class QDocumentEditor(QTextEdit):
         format.setBorderBrush(QBrush(QColor("green"), Qt.BrushStyle.SolidPattern))
 
         self.document().rootFrame().setFrameFormat(format)
+        self.document().setModified(False)
     
     def updateBounds(self):
         self.document().setPageSize(QDocumentEditor.PAGE_SIZE)
@@ -114,35 +144,35 @@ class QDocumentEditor(QTextEdit):
         QWidgetUtility.setMenuAttributes(menu)
 
         undoAction = QAction(parent = menu, text = "Отменить",
-            icon = QResourceProvider.getIcon(Icons.UNDO))
+            icon = QResourceProvider.getIcon(QIcons.UNDO))
         undoAction.setShortcut(QKeySequence("Ctrl+Z"))
         undoAction.triggered.connect(self.undo)
         self.undoAvailable.connect(undoAction.setEnabled)
         menu.undoAction = undoAction
 
         redoAction = QAction(parent = menu, text = "Повторить",
-            icon = QResourceProvider.getIcon(Icons.REDO))
+            icon = QResourceProvider.getIcon(QIcons.REDO))
         redoAction.setShortcut(QKeySequence("Ctrl+Y"))
         redoAction.triggered.connect(self.redo)
         self.redoAvailable.connect(redoAction.setEnabled)
         menu.redoAction = redoAction
 
         cutAction = QAction(parent = menu, text = "Вырезать", 
-            icon = QResourceProvider.getIcon(Icons.CUT))
+            icon = QResourceProvider.getIcon(QIcons.CUT))
         cutAction.setShortcut(QKeySequence("Ctrl+X"))
         cutAction.triggered.connect(self.cut)
         self.copyAvailable.connect(cutAction.setEnabled)
         menu.cutAction = cutAction
 
         copyAction = QAction(parent = menu, text = "Копировать", 
-            icon = QResourceProvider.getIcon(Icons.COPY))
+            icon = QResourceProvider.getIcon(QIcons.COPY))
         copyAction.setShortcut(QKeySequence("Ctrl+C"))
         copyAction.triggered.connect(self.copy)
         self.copyAvailable.connect(copyAction.setEnabled)
         menu.copyAction = copyAction
 
         pasteAction = QAction(parent = menu, text = "Вставить", 
-            icon = QResourceProvider.getIcon(Icons.PASTE))
+            icon = QResourceProvider.getIcon(QIcons.PASTE))
         pasteAction.setShortcut(QKeySequence("Ctrl+V"))
         pasteAction.triggered.connect(self.paste)
         menu.pasteAction = pasteAction
@@ -150,7 +180,7 @@ class QDocumentEditor(QTextEdit):
         menu.addSeparator()
 
         selectAllAction = QAction(parent = menu, text = "Выделить все", 
-            icon = QResourceProvider.getIcon(Icons.COPY))
+            icon = QResourceProvider.getIcon(QIcons.COPY))
         selectAllAction.setShortcut(QKeySequence("Ctrl+A"))
         selectAllAction.triggered.connect(self.selectAll)
         menu.selectAllAction = selectAllAction

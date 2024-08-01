@@ -1,0 +1,33 @@
+QMenu {
+	font-size: 10.5pt;
+	background-color: #f9f8fc;
+	border: 1px solid #e6e3ed;
+	border-radius: 8px;
+	padding: 5px;
+}
+
+QMenu::icon {
+	padding-left: 15px;
+}
+
+QMenu::item {
+	min-width: 150px;
+	background-color: transparent;
+	border-radius: 5px;
+	padding: 6px 6px 6px 12px;
+}
+
+QMenu::item:selected:enabled {
+	background-color: #eeedf1;
+}
+
+QMenu::item:disabled {
+	color: #8f8f90;
+}
+
+QMenu::separator {
+    height: 1px;
+	background-color: #e6e3ed;
+	border: none;
+	margin: 4px 0px 4px 0px;
+}

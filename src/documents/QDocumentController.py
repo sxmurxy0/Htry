@@ -1,4 +1,4 @@
-from PyQt6.QtCore import QObject, QFile
+from PyQt6.QtCore import QObject
 from documents.QDocument import QDocument
 from documents.QDocumentArchiver import QDocumentArchiver
 from widgets.QDialogService import QDialogService
@@ -9,16 +9,23 @@ class QDocumentController(QObject):
     def __init__(self, binder: QBinder) -> None:
         super().__init__()
 
+        self.filePath = None
         self.document = None
-        self.updateBinding = binder.documentUpdatedBinding
+        self.binder = binder
 
-        binder.createDocumentBinding.connect(self.createBlankDocument)
-        binder.openDocumentBinding.connect(self.openDocument)
-        binder.saveDocumentBinding.connect(self.saveDocument)
-        binder.saveDocumentAsBinding.connect(self.saveDocumentAs)
+        self.binder.createDocumentBinding.connect(self.createBlankDocument)
+        self.binder.openDocumentBinding.connect(self.openDocument)
+        self.binder.saveDocumentBinding.connect(self.saveDocument)
+        self.binder.saveDocumentAsBinding.connect(self.saveDocumentAs)
     
-    def ensureCriticalAction(self) -> bool:
-        if not self.document or not self.document.hasUnsavedChanges:
+    def setDocument(self, filePath: str, document: QDocument) -> None:
+        self.filePath = filePath
+        self.document = document
+
+        self.binder.documentUpdatedBinding.emit(self.document)
+    
+    def canPerformCriticalAction(self) -> bool:
+        if not self.document or not self.document.isModified():
             return True
         
         response = QDialogService.getCriticalSavingResponse()
@@ -27,28 +34,25 @@ class QDocumentController(QObject):
         
         return response != QDialogService.Response.CANCEL
     
-    def setDocument(self, document: QDocument) -> None:
-        self.document = document
-        self.updateBinding.emit(self.document)
-    
     def createBlankDocument(self) -> None:
-        if self.ensureCriticalAction():
-            self.setDocument(QDocument())
+        if self.canPerformCriticalAction():
+            self.setDocument(filePath = None, document = QDocument())
 
     def saveDocument(self) -> None:
-        if self.document.filePath:
-            QDocumentArchiver.saveDocument(self.document)
-            self.document.handleSaving()
+        if self.filePath:
+            QDocumentArchiver.saveDocument(self.filePath, self.document)
+            self.document.setModified(False)
         else:
             self.saveDocumentAs()
     
     def saveDocumentAs(self) -> None:
-        filePath = QDialogService.getSaveDocumentAsFile(self.document.fileName())
+        filePath = QDialogService.getSaveDocumentAsFile(self.document.getTitle())
         if filePath:
-            self.document.filePath = filePath
+            self.filePath = filePath
             self.saveDocument()
 
     def openDocument(self) -> None:
         filePath = QDialogService.getOpenDocumentFile()
-        if QFile.exists(filePath) and self.ensureCriticalAction():
-            self.setDocument(QDocumentArchiver.readDocument(filePath))
+        if filePath and self.canPerformCriticalAction():
+            self.setDocument(filePath = filePath, 
+                document = QDocumentArchiver.readDocument(filePath))

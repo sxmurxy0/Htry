@@ -1,6 +1,7 @@
 from PyQt6.QtCore import QFile, QIODeviceBase
 from PyQt6.QtGui import QIcon, QPixmap
-from resources.Icons import Icons
+from resources.QIcons import QIcons
+import typing
         
 class QResourceProvider:
 
@@ -11,19 +12,19 @@ class QResourceProvider:
     def loadIcon(fileName: str) -> QIcon:
         icon = QIcon()
 
-        normal_path = "icons:" + fileName
-        i = normal_path.rfind(".")
-        disabled_path = normal_path[:i] + "_disabled" + normal_path[i:]
+        normalFilePath = "icons:" + fileName
+        i = normalFilePath.rfind(".")
+        disabledFilePath = normalFilePath[:i] + "_disabled" + normalFilePath[i:]
 
-        if QFile.exists(normal_path):
-            icon.addPixmap(QPixmap(normal_path), mode = QIcon.Mode.Normal)
-        if QFile.exists(disabled_path):
-            icon.addPixmap(QPixmap(disabled_path), mode = QIcon.Mode.Disabled)
+        if QFile.exists(normalFilePath):
+            icon.addPixmap(QPixmap(normalFilePath), mode = QIcon.Mode.Normal)
+        if QFile.exists(disabledFilePath):
+            icon.addPixmap(QPixmap(disabledFilePath), mode = QIcon.Mode.Disabled)
         
         return icon
 
     @staticmethod
-    def getIcon(icon: Icons) -> QIcon:
+    def getIcon(icon: QIcons) -> QIcon:
         if icon not in QResourceProvider.ICONS_CACHE:
             QResourceProvider.ICONS_CACHE[icon] = QResourceProvider.loadIcon(icon.value)
         
@@ -31,12 +32,12 @@ class QResourceProvider:
 
     @staticmethod
     def loadStyleSheet(fileName: str) -> str:
-        path = "styles:" + fileName
+        filePath = "styles:" + fileName
         
-        if not QFile.exists(path):
+        if not QFile.exists(filePath):
             return ""
 
-        file = QFile(path)
+        file = QFile(filePath)
         file.open(QIODeviceBase.OpenModeFlag.ReadOnly | QIODeviceBase.OpenModeFlag.Text)
         styleSheet = str(file.readAll(), encoding = "utf-8")
         file.close()
@@ -49,3 +50,11 @@ class QResourceProvider:
             QResourceProvider.STYLES_CACHE[identifier] = QResourceProvider.loadStyleSheet(identifier + ".qss")
             
         return QResourceProvider.STYLES_CACHE[identifier]
+    
+    @staticmethod
+    def getMergedStyleSheet(identifiers: typing.Iterable[str]) -> str:
+        styleSheet = ""
+        for identifier in identifiers:
+            styleSheet += QResourceProvider.getStyleSheet(identifier) + "\n"
+        
+        return styleSheet

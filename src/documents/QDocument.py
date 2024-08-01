@@ -1,34 +1,22 @@
 from PyQt6.QtGui import QTextDocument
-from PyQt6.QtCore import QFile
+from PyQt6.QtCore import QUrl
 import typing
 
 class QDocument(QTextDocument):
 
-    UNDEFINED_FILE_NAME = "Untitled.htry"
-
-    def __init__(self) -> None:
+    def __init__(self, title: str = "Untitled") -> None:
         super().__init__()
         
-        self.filePath = None
+        self.title = title
         self.images = []
-        self.hasUnsavedChanges = False
-        
-        self.contentsChanged.connect(self.handleContentChanging)
     
-    def handleContentChanging(self) -> None:
-        self.hasUnsavedChanges = True
+    def getTitle(self) -> str:
+        return self.title
     
-    def handleSaving(self) -> None:
-        self.hasUnsavedChanges =False
+    def getImages(self) -> typing.Iterable[str]:
+        return self.images
     
-    def fileName(self) -> str:
-        if self.filePath:
-            i = self.filePath.rfind("/")
-            return self.filePath[i + 1:]
-        
-        return QDocument.UNDEFINED_FILE_NAME
-    
-    def addResource(self, type: int, file: QFile, resource: typing.Any) -> None:
-        super().addResource(type, file, resource)
+    def addResource(self, type: int, url: QUrl, resource: typing.Any) -> None:
+        super().addResource(type, url, resource)
         if type == QTextDocument.ResourceType.ImageResource:
-            self.__images.append(file.toString())
+            self.images.append(url.toString())

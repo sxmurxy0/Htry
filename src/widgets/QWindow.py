@@ -4,17 +4,17 @@ from widgets.QMenuPanel import QMenuPanel
 from widgets.QHotbar import QHotbar
 from widgets.QDocumentEditor import QDocumentEditor
 from QBinder import QBinder
-from resources.Icons import Icons
+from documents.QDocumentController import QDocumentController
 from resources.QResourceProvider import QResourceProvider
 from documents.QDocument import QDocument
-from documents.QDocumentController import QDocumentController
+from resources.QIcons import QIcons
 
 class QWindow(QWidget):
 
     def __init__(self) -> None:
         super().__init__()
 
-        self.setWindowIcon(QResourceProvider.getIcon(Icons.LOGO))
+        self.setWindowIcon(QResourceProvider.getIcon(QIcons.LOGO))
 
         self.setMinimumSize(850, 420)
         self.setStyleSheet(QResourceProvider.getStyleSheet("window"))
@@ -49,8 +49,7 @@ class QWindow(QWidget):
         self.content.layout().addWidget(self.editor)
 
         self.binder.quitBinding.connect(self.close)
-        self.binder.documentUpdatedBinding.connect(self.updateWindowTitle)
-        
+        self.binder.documentUpdatedBinding.connect(self.handleDocumentUpdating)
         self.editor.cursorPositionChanged.connect(self.ensureEditorCursorVisible)
 
         self.documentController.createBlankDocument()
@@ -59,11 +58,12 @@ class QWindow(QWidget):
         position = self.editor.mapToParent(self.editor.cursorRect().center())
         self.scrollArea.ensureVisible(position.x(), position.y())
     
-    def updateWindowTitle(self, document: QDocument) -> None:
-        self.setWindowTitle(f"Htry ~ {document.fileName()}")
+    def handleDocumentUpdating(self, document: QDocument) -> None:
+        self.setWindowTitle(f"Htry ~ {document.getTitle()}.htry")
+        self.scrollArea.verticalScrollBar().setValue(0)
     
     def closeEvent(self, event: QCloseEvent) -> None:
-        if self.documentController.ensureCriticalAction():
+        if self.documentController.canPerformCriticalAction():
             event.accept()
         else:
             event.ignore()

@@ -3,7 +3,7 @@ QMenuPanel {
 	padding-left: 5px;
 }
 
-QPushButton {
+QMenuPanelButton {
 	height: 31px;
 	font-size: 10.5pt;
 	background-color: transparent;
@@ -11,11 +11,11 @@ QPushButton {
 	padding: 0px 10px 0px 9px;
 }
 
-QPushButton:hover, QPushButton:open {
+QMenuPanelButton:hover, QMenuPanelButton:open {
 	background-color: #ebe9f0;
 }
 
-QPushButton::menu-indicator {
+QMenuPanelButton::menu-indicator {
 	width: 0px;
 	height: 0px;
 }

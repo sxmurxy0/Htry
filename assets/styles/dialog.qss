@@ -1,12 +1,16 @@
-QCriticalSavingDialog {
+QDialog {
 	background-color: #fbfbfc;
 }
 
-QLabel {
+QLabel#title {
 	font-size: 10pt;
 }
 
-QPushButton {
+QFrame#decoration {
+    background-color: #f4f2f9;
+}
+
+QPushButton[modal_button = true] {
 	font-size: 10.5pt;
     background-color: #fefdfe;
 	color: #000000;
@@ -15,10 +19,6 @@ QPushButton {
     padding: 0px;
 }
 
-QPushButton:hover {
+QPushButton[modal_button = true]:hover {
     background-color: #f9f9fa;
-}
-
-QFrame#decoration {
-    background-color: #f4f2f9;
 }

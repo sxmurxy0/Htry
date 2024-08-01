@@ -1,6 +1,6 @@
-from enum import Enum
+from enum import StrEnum
 
-class Icons(Enum):
+class QIcons(StrEnum):
     LOGO = "logo.png"
     ARROW_DOWN = "arrow_down.png"
     ARROW_UP = "arrow_up.png"
