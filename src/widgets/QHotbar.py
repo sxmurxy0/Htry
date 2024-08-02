@@ -1,22 +1,64 @@
 from PyQt6.QtWidgets import (QWidget, QFrame, QHBoxLayout, QGridLayout,
     QFontComboBox, QSpinBox, QPushButton, QLabel, QButtonGroup)
-from PyQt6.QtGui import QIcon
+from PyQt6.QtGui import QIcon, QPainter, QColor, QPaintEvent, QMouseEvent
 from PyQt6.QtCore import Qt
 from widgets.QWidgetUtility import QWidgetUtility
+from widgets.QDialogService import QDialogService
 from resources.QIcons import QIcons
 from resources.QResourceProvider import QResourceProvider
 from QBinder import QBinder
 import typing
 
 class QHotbar(QFrame):
-
+        
     class QHotbarButton(QPushButton):
 
         def __init__(self, parent: QWidget = None, text: str = None, icon: QIcon = None) -> None:
             super().__init__(parent = parent, text = text)
             if icon:
                 self.setIcon(icon)
+    
+    class QHotbarColorButton(QHotbarButton):
 
+        def __init__(self, parent: QWidget = None, text: str = None, icon: QIcon = None, color: QColor = QColor("#ffffff")) -> None:
+            super().__init__(parent = parent, text = text, icon = icon)
+            self.color = color
+        
+        def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
+            if event.button() == Qt.MouseButton.RightButton:
+                color = QDialogService.getColor(self.color)
+                if color != None:
+                    self.color = color
+                    self.clicked.emit()
+        
+        def setColor(self, color: QColor) -> None:
+            self.color = color
+        
+        def paintEvent(self, event: QPaintEvent) -> None:
+            super().paintEvent(event)
+
+            painter = QPainter(self)
+            painter.setPen(self.color)
+            painter.setBrush(self.color)
+            painter.drawRect(1, self.height() - 2, self.width() - 2, 2)
+            painter.end()
+    
+    class QHotbarIntegerButton(QHotbarButton):
+
+        def __init__(self, parent: QWidget = None, text: str = None, icon: QIcon = None, value: int = 0) -> None:
+            super().__init__(parent = parent, text = text, icon = icon)
+            self.value = value
+        
+        def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
+            if event.button() == Qt.MouseButton.RightButton:
+                value = QDialogService.getIntegerValue(value = self.value)
+                if value != None:
+                    self.value = value
+                    self.clicked.emit()
+        
+        def setValue(self, value: int) -> None:
+            self.value = value
+        
     class QHotbarCategory(QFrame):
 
         def __init__(self, parent: QWidget, title: str) -> None:
@@ -52,31 +94,37 @@ class QHotbar(QFrame):
         layout.setSpacing(1)
         self.setLayout(layout)
 
-        self.setupFontCategory(binder)
-        self.setupFormatCategory(binder)
-        self.setupColorCategory(binder)
-        self.setupAlignCategory(binder)
-        self.setupInsertionCategory(binder)
-        self.setupParagraphCategory(binder)
+        self.binder = binder
+
+        self.setupFontCategory()
+        self.setupFormatCategory()
+        self.setupColorCategory()
+        self.setupAlignCategory()
+        self.setupInsertionCategory()
+        self.setupParagraphCategory()
 
         QWidgetUtility.addHorizontalSpacer(self)
     
-    def setupFontCategory(self, binder: QBinder) -> None:
+    def setupFontCategory(self) -> None:
         category = QHotbar.QHotbarCategory(parent = self, title = "Шрифт")
 
         fontInput = QFontComboBox(parent = category)
+        fontInput.setStyleSheet(QResourceProvider.getStyleSheet("font_combo_box"))
         fontInput.setFixedSize(150, 28)
-        fontInput.currentFontChanged.connect(binder.hotbarFontBinding.emit)
-        binder.cursorFontBinding.connect(fontInput.setCurrentFont)
+        fontInput.currentFontChanged.connect(self.binder.hotbarFontBinding.emit)
+        self.binder.cursorFontBinding.connect(fontInput.setCurrentFont)
         category.fontInput = fontInput
+
+        QWidgetUtility.hackFontComboBox(fontInput)
 
         fontSizeInput = QSpinBox(parent = category)
         fontSizeInput.setFixedSize(50, 28)
         fontSizeInput.setRange(1, 72)
-        fontSizeInput.valueChanged.connect(binder.hotbarFontSizeBinding.emit)
-        binder.cursorFontSizeBinding.connect(fontSizeInput.setValue)
+        fontSizeInput.editingFinished.connect(
+            lambda: self.binder.hotbarFontSizeBinding.emit(fontSizeInput.value()))
+        self.binder.cursorFontSizeBinding.connect(fontSizeInput.setValue)
         category.fontSizeInput = fontSizeInput
-
+        
         category.addWidgets((fontInput, fontSizeInput))
         
         self.layout().addWidget(category)
@@ -84,61 +132,70 @@ class QHotbar(QFrame):
 
         QWidgetUtility.addVerticalSeparator(widget = self, height = 62)
     
-    def setupFormatCategory(self, binder: QBinder) -> None:
+    def setupFormatCategory(self) -> None:
         category = QHotbar.QHotbarCategory(parent = self, title = "Формат")
 
         boldButton = QHotbar.QHotbarButton(parent = category,
             icon = QResourceProvider.getIcon(QIcons.BOLD))
         QWidgetUtility.setButtonParameters(boldButton, width = 28, height = 28,
             iconWidth = 16, iconHeight = 16, checkable = True)
-        boldButton.toggled.connect(binder.hotbarBoldBinding.emit)
-        binder.cursorBoldBinding.connect(boldButton.setChecked)
+        boldButton.toggled.connect(self.binder.hotbarBoldBinding.emit)
+        self.binder.cursorBoldBinding.connect(boldButton.setChecked)
         category.boldButton = boldButton
 
         italicButton = QHotbar.QHotbarButton(parent = category,
             icon = QResourceProvider.getIcon(QIcons.ITALIC))
         QWidgetUtility.setButtonParameters(italicButton, width = 28, height = 28,
             iconWidth = 16, iconHeight = 16, checkable = True)
-        italicButton.toggled.connect(binder.hotbarItalicBinding.emit)
-        binder.cursorItalicBinding.connect(italicButton.setChecked)
+        italicButton.toggled.connect(self.binder.hotbarItalicBinding.emit)
+        self.binder.cursorItalicBinding.connect(italicButton.setChecked)
         category.italicButton = italicButton
 
         underlineButton = QHotbar.QHotbarButton(parent = category,
             icon = QResourceProvider.getIcon(QIcons.UNDERLINE))
         QWidgetUtility.setButtonParameters(underlineButton, width = 28, height = 28,
             iconWidth = 16, iconHeight = 16, checkable = True)
-        underlineButton.toggled.connect(binder.hotbarUnderlineBinding.emit)
-        binder.cursorUnderlineBinding.connect(underlineButton.setChecked)
+        underlineButton.toggled.connect(self.binder.hotbarUnderlineBinding.emit)
+        self.binder.cursorUnderlineBinding.connect(underlineButton.setChecked)
         category.underlineButton = underlineButton
         
         strikethroughButton = QHotbar.QHotbarButton(parent = category,
-            icon = QResourceProvider.getIcon(QIcons.STRIKETHROUGH))
+            icon = QResourceProvider.getIcon(QIcons.STRIKEOUT))
         QWidgetUtility.setButtonParameters(strikethroughButton, width = 28, height = 28,
             iconWidth = 16, iconHeight = 16, checkable = True)
-        strikethroughButton.toggled.connect(binder.hotbarStrikethroughBinding.emit)
-        binder.cursorStrikethroughBinding.connect(strikethroughButton.setChecked)
+        strikethroughButton.toggled.connect(self.binder.hotbarStrikeoutBinding.emit)
+        self.binder.cursorStrikeoutBinding.connect(strikethroughButton.setChecked)
         category.strikethroughButton = strikethroughButton
 
-        category.addWidgets((boldButton, italicButton, underlineButton, strikethroughButton))
+        resetButton = QHotbar.QHotbarButton(parent = category,
+            icon = QResourceProvider.getIcon(QIcons.ERASER))
+        resetButton.clicked.connect(self.binder.resetFormatBinding)
+        QWidgetUtility.setButtonParameters(resetButton, width = 28, height = 28,
+            iconWidth = 18, iconHeight = 18)
+        category.resetButton = resetButton
+
+        category.addWidgets((boldButton, italicButton, underlineButton, strikethroughButton, resetButton))
 
         self.layout().addWidget(category)
         self.formatCategory = category
 
         QWidgetUtility.addVerticalSeparator(widget = self, height = 62)
     
-    def setupColorCategory(self, binder: QBinder) -> None:
+    def setupColorCategory(self) -> None:
         category = QHotbar.QHotbarCategory(parent = self, title = "Цвет")
 
-        textColorButton = QHotbar.QHotbarButton(parent = category,
-            icon = QResourceProvider.getIcon(QIcons.PICKER))
+        textColorButton = QHotbar.QHotbarColorButton(parent = category,
+            icon = QResourceProvider.getIcon(QIcons.PICKER), color = QColor("#00000"))
         QWidgetUtility.setButtonParameters(textColorButton, width = 28, height = 28,
-            iconWidth = 18, iconHeight = 18, checkable = True)
+            iconWidth = 18, iconHeight = 18)
+        textColorButton.clicked.connect(self.handleTextColorButtonClick)
         category.textColorButton = textColorButton
         
-        bgColorButton = QHotbar.QHotbarButton(parent = category,
-            icon = QResourceProvider.getIcon(QIcons.FILLING))
+        bgColorButton = QHotbar.QHotbarColorButton(parent = category,
+            icon = QResourceProvider.getIcon(QIcons.FILLING), color = QColor("#ffffff"))
         QWidgetUtility.setButtonParameters(bgColorButton, width = 28, height = 28,
-            iconWidth = 18, iconHeight = 18, checkable = True)
+            iconWidth = 18, iconHeight = 18)
+        bgColorButton.clicked.connect(self.handleBgColorButtonClick)
         category.bgColorButton = bgColorButton
 
         category.addWidgets((textColorButton, bgColorButton))
@@ -148,7 +205,7 @@ class QHotbar(QFrame):
         
         QWidgetUtility.addVerticalSeparator(widget = self, height = 62)
     
-    def setupAlignCategory(self, binder: QBinder) -> None:
+    def setupAlignCategory(self) -> None:
         category = QHotbar.QHotbarCategory(parent = self, title = "Выравнивание")
         category.group = QButtonGroup(category)
 
@@ -185,8 +242,8 @@ class QHotbar(QFrame):
         category.alignJustifyButton = alignJustifyButton
 
         category.group.buttonClicked.connect(
-            lambda button: binder.hotbarAlignmentBinding.emit(button.alignment))
-        binder.cursorAlignmentBinding.connect(self.handleCursorAlignment)
+            lambda button: self.binder.hotbarAlignmentBinding.emit(button.alignment))
+        self.binder.cursorAlignmentBinding.connect(self.handleCursorAlignment)
 
         category.addWidgets((alignLeftButton, alignCenterButton, alignRightButton, alignJustifyButton))
 
@@ -195,21 +252,21 @@ class QHotbar(QFrame):
 
         QWidgetUtility.addVerticalSeparator(widget = self, height = 62)
     
-    def setupInsertionCategory(self, binder: QBinder) -> None:
+    def setupInsertionCategory(self) -> None:
         category = QHotbar.QHotbarCategory(parent = self, title = "Вставка")
 
         pictureButton = QHotbar.QHotbarButton(parent = category,
-            icon = QResourceProvider.getIcon(QIcons.PICTURE))
+            icon = QResourceProvider.getIcon(QIcons.IMAGE))
         QWidgetUtility.setButtonParameters(pictureButton, width = 28, height = 28,
             iconWidth = 22, iconHeight = 22)
-        pictureButton.clicked.connect(binder.insertPictureBinding.emit)
+        pictureButton.clicked.connect(self.binder.insertImageBinding.emit)
         category.pictureButton = pictureButton
 
         linkButton = QHotbar.QHotbarButton(parent = category,
             icon = QResourceProvider.getIcon(QIcons.LINK))
         QWidgetUtility.setButtonParameters(linkButton, width = 28, height = 28,
             iconWidth = 18, iconHeight = 18)
-        linkButton.clicked.connect(binder.insertLinkBindng.emit)
+        linkButton.clicked.connect(self.binder.insertLinkBindng.emit)
         category.linkButton = linkButton
         
         category.addWidgets((pictureButton, linkButton))
@@ -219,17 +276,23 @@ class QHotbar(QFrame):
         
         QWidgetUtility.addVerticalSeparator(widget = self, height = 62)
     
-    def setupParagraphCategory(self, binder: QBinder) -> None:
+    def setupParagraphCategory(self) -> None:
         category = QHotbar.QHotbarCategory(parent = self, title = "Абзац")
 
-        spacingButton = QHotbar.QHotbarButton(icon = QResourceProvider.getIcon(QIcons.SPACING))
+        spacingButton = QHotbar.QHotbarIntegerButton(parent = category,
+            icon = QResourceProvider.getIcon(QIcons.SPACING))
         QWidgetUtility.setButtonParameters(spacingButton, width = 28, height = 28,
-            iconWidth = 20, iconHeight = 20, checkable = True)
+            iconWidth = 20, iconHeight = 20)
+        spacingButton.clicked.connect(self.handleSpacingButtonClick)
+        self.binder.cursorSpacingBinding.connect(spacingButton.setValue)
         category.spacingButton = spacingButton
 
-        indentationButton = QHotbar.QHotbarButton(icon = QResourceProvider.getIcon(QIcons.INDENTATION))
+        indentationButton = QHotbar.QHotbarIntegerButton(parent = category,
+            icon = QResourceProvider.getIcon(QIcons.INDENTATION))
         QWidgetUtility.setButtonParameters(indentationButton, width = 28, height = 28,
-            iconWidth = 20, iconHeight = 20, checkable = True)
+            iconWidth = 20, iconHeight = 20)
+        indentationButton.clicked.connect(self.handleIndentationButtonClick)
+        self.binder.cursorIndentationBinding.connect(indentationButton.setValue)
         category.indentationButton = indentationButton
 
         category.addWidgets((spacingButton, indentationButton))
@@ -239,7 +302,23 @@ class QHotbar(QFrame):
         
         QWidgetUtility.addVerticalSeparator(widget = self, height = 62)
     
-    def handleCursorAlignment(self, alignment: Qt.AlignmentFlag):
+    def handleTextColorButtonClick(self) -> None:
+        self.binder.textColorBinding.emit(
+            self.colorCategory.textColorButton.color)
+    
+    def handleBgColorButtonClick(self) -> None:
+        self.binder.bgColorBinding.emit(
+            self.colorCategory.bgColorButton.color)
+    
+    def handleSpacingButtonClick(self) -> None:
+        self.binder.hotbarSpacingBinding.emit(
+            self.paragraphCategory.spacingButton.value)  
+        
+    def handleIndentationButtonClick(self) -> None:
+        self.binder.hotbarIndentationBinding.emit(
+            self.paragraphCategory.indentationButton.value)
+    
+    def handleCursorAlignment(self, alignment: Qt.AlignmentFlag) -> None:
         for button in self.alignmentCategory.group.buttons():
             if button.alignment == alignment:
                 button.setChecked(True)

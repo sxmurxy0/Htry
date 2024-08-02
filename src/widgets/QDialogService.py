@@ -1,5 +1,6 @@
-from PyQt6.QtWidgets import QDialog, QFileDialog, QFrame, QLabel, QPushButton, QLineEdit
+from PyQt6.QtWidgets import QDialog, QFileDialog, QFrame, QLabel, QPushButton, QLineEdit, QSpinBox, QColorDialog
 from PyQt6.QtGui import QColor, QIcon
+from PyQt6.QtCore import Qt, QSize
 from resources.QIcons import QIcons
 from resources.QResourceProvider import QResourceProvider
 from enum import IntEnum
@@ -24,7 +25,7 @@ class QDialogService:
             self.setWindowTitle("Предупреждение")
 
             self.setFixedSize(305, 110)
-            self.setStyleSheet(QResourceProvider.getStyleSheet("dialog"))
+            self.setStyleSheet(QResourceProvider.getStyleSheet("saving_dialog"))
             
             self.iconLabel = QLabel(self)
             self.iconLabel.setPixmap(QResourceProvider.getIcon(QIcons.CRITICAL)
@@ -59,13 +60,6 @@ class QDialogService:
             self.cancelButton.clicked.connect(
                 lambda: self.done(QDialogService.Response.CANCEL.value))
     
-    class QColorPickerDialog(QDialog):
-        def __init__(self) -> None:
-            super().__init__()
-
-            self.setWindowIcon(QResourceProvider.getIcon(QIcons.LOGO))
-            self.setWindowTitle("Выберите цвет")
-    
     class QLinkInsertionDialog(QDialog):
 
         def __init__(self, text: str) -> None:
@@ -75,7 +69,6 @@ class QDialogService:
             self.setWindowTitle("Вставка ссылки")
 
             self.setFixedSize(336, 139)
-            self.setStyleSheet(QResourceProvider.getStyleSheet("dialog"))
 
             self.textInput = QLineEdit(self)
             self.textInput.setPlaceholderText("Заголовок")
@@ -105,6 +98,76 @@ class QDialogService:
         
         def getResult(self) -> typing.Tuple[str, str]:
             return (self.textInput.text(), self.urlInput.text())
+    
+    class QImageSizeDialog(QDialog):
+
+        def __init__(self, maxWidth: int, maxHeight: int) -> None:
+            super().__init__()
+
+            self.setWindowIcon(QResourceProvider.getIcon(QIcons.LOGO))
+            self.setWindowTitle("Размер изображения")
+
+            self.setFixedSize(257, 106)
+
+            self.label = QLabel(self, text = "x")
+            self.label.setGeometry(26, 16, 205, 28)
+            self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+            self.widthSpinBox = QSpinBox(self)
+            self.widthSpinBox.setGeometry(26, 16, 91, 28)
+            self.widthSpinBox.setRange(0, maxWidth)
+
+            self.heightSpinBox = QSpinBox(self)
+            self.heightSpinBox.setGeometry(140, 16, 91, 28)
+            self.heightSpinBox.setRange(0, maxHeight)
+
+            self.decoration = QFrame(self)
+            self.decoration.setObjectName("decoration")
+            self.decoration.setGeometry(0, 60, 257, 46)
+
+            self.acceptButton = QPushButton(parent = self, text = "Применить")
+            self.acceptButton.setProperty("modal_button", True)
+            self.acceptButton.setGeometry(130, 70, 101, 24)
+            self.acceptButton.clicked.connect(
+                lambda: self.done(QDialogService.Response.ACCEPT.value))
+        
+        def getResult(self) -> QSize:
+            return QSize(self.widthSpinBox.value(), self.heightSpinBox.value())
+    
+    class QIntegerInputDialog(QDialog):
+
+        def __init__(self, value: int) -> None:
+            super().__init__()
+
+            self.setWindowIcon(QResourceProvider.getIcon(QIcons.LOGO))
+            self.setWindowTitle("Ввод значения")
+
+            self.setFixedSize(243, 105)
+
+            self.inputSpinBox = QSpinBox(self)
+            self.inputSpinBox.setGeometry(26, 16, 190, 28)
+            self.inputSpinBox.setRange(0, 1000)
+
+            self.decoration = QFrame(self)
+            self.decoration.setObjectName("decoration")
+            self.decoration.setGeometry(0, 60, 243, 45)
+
+            self.acceptButton = QPushButton(parent = self, text = "Применить")
+            self.acceptButton.setProperty("modal_button", True)
+            self.acceptButton.setGeometry(26, 70, 101, 24)
+            self.acceptButton.clicked.connect(
+                lambda: self.done(QDialogService.Response.ACCEPT.value))
+            
+            self.cancelButton = QPushButton(parent = self, text = "Отмена")
+            self.cancelButton.setProperty("modal_button", True)
+            self.cancelButton.setGeometry(136, 70, 81, 24)
+            self.cancelButton.clicked.connect(
+                lambda: self.done(QDialogService.Response.CANCEL.value))
+            
+            self.inputSpinBox.setValue(value)
+        
+        def getResult(self) -> int:
+            return self.inputSpinBox.value()
 
     @staticmethod
     def getCriticalSavingResponse() -> int:
@@ -122,20 +185,33 @@ class QDialogService:
             caption = "Сохранить как", filter = QDialogService.HTRY_FILE_FILTER)[0]
     
     @staticmethod
+    def getColor(color: QColor = None) -> QColor:
+        dialog = QColorDialog(color)
+        dialog.setWindowIcon(QResourceProvider.getIcon(QIcons.LOGO))
+        dialog.setWindowTitle("Выбор цвета")
+        dialog.setStyleSheet(QResourceProvider.getStyleSheet("color_dialog"))
+        code = dialog.exec()
+    
+        return None if code == QDialogService.Response.CANCEL else dialog.currentColor()
+    
+    @staticmethod
     def getImageInsertionFile() -> str:
         return QFileDialog.getOpenFileName(caption = "Вставка изображения",
             filter = QDialogService.IMAGE_FILE_FILTER)[0]
     
     @staticmethod
+    def getImageSize(maxWidth: int = 2560, maxHeight: int = 1920) -> QSize:
+        dialog = QDialogService.QImageSizeDialog(maxWidth = maxWidth, maxHeight = maxHeight)
+        dialog.exec()
+        return dialog.getResult()
+    
+    @staticmethod
     def getLinkInsertionData(text: str = None) -> typing.Tuple[str, str]:
         dialog = QDialogService.QLinkInsertionDialog(text)
         code = dialog.exec()
-
-        if code == QDialogService.Response.ACCEPT:
-            return dialog.getResult()
-        
-        return None
+        return None if code != QDialogService.Response.ACCEPT else dialog.getResult()
     
-    @staticmethod
-    def getColor(color: QColor = None) -> QColor:
-        return QDialogService.QColorPickerDialog().exec()
+    def getIntegerValue(value : int = 0):
+        dialog = QDialogService.QIntegerInputDialog(value = value)
+        code = dialog.exec()
+        return None if code != QDialogService.Response.ACCEPT else dialog.getResult()

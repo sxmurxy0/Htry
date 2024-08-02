@@ -1,0 +1,3 @@
+QLabel#title {
+	font-size: 10pt;
+}

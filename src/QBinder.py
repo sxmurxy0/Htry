@@ -27,6 +27,8 @@ class QBinder(QObject):
     redoBinding = pyqtSignal()
     redoAvailableBinding = pyqtSignal(bool)
 
+    selectAllBinding = pyqtSignal()
+
     hotbarFontBinding = pyqtSignal(QFont)
     cursorFontBinding = pyqtSignal(QFont)
 
@@ -42,19 +44,24 @@ class QBinder(QObject):
     hotbarUnderlineBinding = pyqtSignal(bool)
     cursorUnderlineBinding = pyqtSignal(bool)
 
-    hotbarStrikethroughBinding = pyqtSignal(bool)
-    cursorStrikethroughBinding = pyqtSignal(bool)
+    hotbarStrikeoutBinding = pyqtSignal(bool)
+    cursorStrikeoutBinding = pyqtSignal(bool)
 
-    hotbarTextColorBinding = pyqtSignal(QColor)
-    cursorTextColorBinding = pyqtSignal(QColor)
-
-    hotbarBgColorBinding = pyqtSignal(QColor)
-    cursorBgColorBinding = pyqtSignal(QColor)
+    textColorBinding = pyqtSignal(QColor)
+    bgColorBinding = pyqtSignal(QColor)
 
     hotbarAlignmentBinding = pyqtSignal(Qt.AlignmentFlag)
     cursorAlignmentBinding = pyqtSignal(Qt.AlignmentFlag)
 
-    insertPictureBinding = pyqtSignal()
+    insertImageBinding = pyqtSignal()
     insertLinkBindng = pyqtSignal()
+
+    hotbarIndentationBinding = pyqtSignal(int)
+    cursorIndentationBinding = pyqtSignal(int)
+
+    hotbarSpacingBinding = pyqtSignal(int)
+    cursorSpacingBinding = pyqtSignal(int)
+
+    resetFormatBinding = pyqtSignal()
 
     documentUpdatedBinding = pyqtSignal(QDocument)

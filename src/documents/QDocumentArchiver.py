@@ -25,7 +25,7 @@ class QDocumentArchiver:
         byteArray = QByteArray()
         buffer = QBuffer(byteArray)
         buffer.open(QIODeviceBase.OpenModeFlag.WriteOnly)
-        pixmap.save(device = buffer, format = format)
+        pixmap.save(buffer, format)
         buffer.close()
 
         return byteArray
@@ -33,7 +33,7 @@ class QDocumentArchiver:
     @staticmethod
     def byteArray2Pixmap(byteArray: QByteArray, format: str) -> QPixmap:
         pixmap = QPixmap()
-        pixmap.loadFromData(buf = byteArray, format = format)
+        pixmap.loadFromData(byteArray, format)
 
         return pixmap
 

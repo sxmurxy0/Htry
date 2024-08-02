@@ -2,10 +2,6 @@ QDialog {
 	background-color: #fbfbfc;
 }
 
-QLabel#title {
-	font-size: 10pt;
-}
-
 QFrame#decoration {
     background-color: #f4f2f9;
 }
@@ -13,7 +9,6 @@ QFrame#decoration {
 QPushButton[modal_button = true] {
 	font-size: 10.5pt;
     background-color: #fefdfe;
-	color: #000000;
     border: 1px solid #e0dde8;
     border-radius: 5px;
     padding: 0px;

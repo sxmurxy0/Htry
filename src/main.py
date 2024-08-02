@@ -15,7 +15,7 @@ if __name__ == "__main__":
     
     application = QApplication(sys.argv + ["-platform", "windows:darkmode=2", "-style", "windows"])
     application.setStyleSheet(QResourceProvider.getMergedStyleSheet(
-        ("common", "scroll_area", "separator", "menu", "input")))
+        ("common", "scroll_area", "separator", "menu", "input", "dialog")))
     QFontDatabase.addApplicationFont("fonts:Malgun_Gothic.ttf")
     
     window = QWindow()

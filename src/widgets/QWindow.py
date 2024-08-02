@@ -49,7 +49,7 @@ class QWindow(QWidget):
         self.content.layout().addWidget(self.editor)
 
         self.binder.quitBinding.connect(self.close)
-        self.binder.documentUpdatedBinding.connect(self.handleDocumentUpdating)
+        self.binder.documentUpdatedBinding.connect(self.handleDocumentUpdate)
         self.editor.cursorPositionChanged.connect(self.ensureEditorCursorVisible)
 
         self.documentController.createBlankDocument()
@@ -58,7 +58,7 @@ class QWindow(QWidget):
         position = self.editor.mapToParent(self.editor.cursorRect().center())
         self.scrollArea.ensureVisible(position.x(), position.y())
     
-    def handleDocumentUpdating(self, document: QDocument) -> None:
+    def handleDocumentUpdate(self, document: QDocument) -> None:
         self.setWindowTitle(f"Htry ~ {document.getTitle()}.htry")
         self.scrollArea.verticalScrollBar().setValue(0)
     

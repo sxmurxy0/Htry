@@ -1,4 +1,4 @@
-QLineEdit, QFontComboBox, QSpinBox {
+QLineEdit, QSpinBox {
 	font-size: 10.5pt;
 	background-color: #fefdfe;
 	border: 1px solid #e6e3ed;
@@ -6,22 +6,13 @@ QLineEdit, QFontComboBox, QSpinBox {
 	padding-left: 2px;
 }
 
-QLineEdit, QFontComboBox:hover, QSpinBox:hover {
+QLineEdit, QSpinBox:hover {
 	background-color: #f9f9fa;
 }
 
-QLineEdit, QFontComboBox:focus, QSpinBox:focus {
+QLineEdit, QSpinBox:focus {
 	background-color: #fefdfe;
 	border-bottom: 1px solid #d2d1d3;
-}
-
-QFontComboBox::drop-down {
-	image: url("icons:search.png");
-	width: 10px;
-	height: 10px;
-	border-radius: 3px;
-	padding: 5px;
-	margin: 3px;
 }
 
 QSpinBox::up-button {
@@ -39,6 +30,6 @@ QSpinBox::up-button, QSpinBox::down-button {
 	margin-right: 1px;
 }
 
-QFontComboBox::drop-down:hover, QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+QSpinBox::up-button:hover, QSpinBox::down-button:hover {
 	background-color: #ebebeb;
 }

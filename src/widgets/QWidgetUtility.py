@@ -1,4 +1,5 @@
-from PyQt6.QtWidgets import QWidget, QFrame, QMenu, QSpacerItem, QSizePolicy, QPushButton
+from PyQt6.QtWidgets import QWidget, QFrame, QMenu, QSpacerItem, QSizePolicy, QPushButton, QFontComboBox
+from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt, QSize
 
 class QWidgetUtility:
@@ -38,3 +39,13 @@ class QWidgetUtility:
         button.setFixedSize(width, height)
         button.setIconSize(QSize(iconWidth, iconHeight))
         button.setCheckable(checkable)
+    
+    @staticmethod
+    def hackFontComboBox(fontComboBox: QFontComboBox) -> None:
+        fontComboBox.setFont(QFont("", 8))
+        fontComboBox.children()[0].setFont(QFont("Malgun Gothic", 10))
+
+        popup = fontComboBox.children()[1]
+        popup.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        popup.setWindowFlags(Qt.WindowType.Popup | Qt.WindowType.FramelessWindowHint 
+            | Qt.WindowType.NoDropShadowWindowHint)
