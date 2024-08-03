@@ -64,7 +64,7 @@ class QDocumentEditor(QTextEdit):
 
         self.binder.hotbarSpacingBinding.connect(self.setSpacing)
         self.binder.hotbarIndentationBinding.connect(self.setIndentation)
-        
+        self.binder.applyStyleBinding.connect(self.applyStyle)
         self.binder.resetFormatBinding.connect(self.resetFormat)
 
         self.binder.documentUpdatedBinding.connect(self.setDocument)
@@ -134,6 +134,25 @@ class QDocumentEditor(QTextEdit):
             super().setAlignment(alignment)
             self.setFocus()
     
+    def applyStyle(self, style: dict) -> None:
+        self.setFontPointSize(style["font_size"])
+        self.setFontBold(style["bold"])
+        self.setFontItalic(style["italic"])
+        self.setFontUnderline(style["underline"])
+        self.setFontStrikeout(style["strikeout"])
+        self.setTextColor(QColor(style["text_color"]))
+        self.setBgColor(QColor(style["bg_color"]))
+        self.setSpacing(style["spacing"])
+        self.setIndentation(style["indentation"])
+
+        mode = {
+            "center": Qt.AlignmentFlag.AlignCenter,
+            "left": Qt.AlignmentFlag.AlignLeft,
+            "right": Qt.AlignmentFlag.AlignRight,
+            "justift": Qt.AlignmentFlag.AlignJustify
+        }
+        self.setAlignment(mode[style["alignment"]])
+
     def insertPicture(self) -> None:
         image = QDialogService.getImageInsertionFile()
         if image:

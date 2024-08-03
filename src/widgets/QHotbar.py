@@ -1,13 +1,13 @@
 from PyQt6.QtWidgets import (QWidget, QFrame, QHBoxLayout, QGridLayout,
     QFontComboBox, QSpinBox, QPushButton, QLabel, QButtonGroup)
 from PyQt6.QtGui import QIcon, QPainter, QColor, QPaintEvent, QMouseEvent
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QFile
 from widgets.QWidgetUtility import QWidgetUtility
 from widgets.QDialogService import QDialogService
 from resources.QIcons import QIcons
 from resources.QResourceProvider import QResourceProvider
 from QBinder import QBinder
-import typing
+import typing, json, os
 
 class QHotbar(QFrame):
         
@@ -20,7 +20,8 @@ class QHotbar(QFrame):
     
     class QHotbarColorButton(QHotbarButton):
 
-        def __init__(self, parent: QWidget = None, text: str = None, icon: QIcon = None, color: QColor = QColor("#ffffff")) -> None:
+        def __init__(self, parent: QWidget = None, text: str = None, icon: QIcon = None, 
+                color: QColor = QColor("#ffffff")) -> None:
             super().__init__(parent = parent, text = text, icon = icon)
             self.color = color
         
@@ -58,7 +59,38 @@ class QHotbar(QFrame):
         
         def setValue(self, value: int) -> None:
             self.value = value
-        
+    
+    class QHotbarStyleButton(QHotbarButton):
+
+        def __init__(self, parent: QWidget = None, text: str = None, icon: QIcon = None) -> None:
+            super().__init__(parent = parent, text = text, icon = icon)
+            self.filePath = os.getenv('APPDATA') + "\config.json"
+            self.data = {}
+            self.style = ''
+
+            self.readConfig()
+    
+        def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
+            if event.button() == Qt.MouseButton.RightButton:
+                self.style = QDialogService.getStyle(data = self.data,
+                    style = self.style)
+                self.writeConfig()
+                self.clicked.emit()
+                
+        def readConfig(self) -> None:
+            if not QFile.exists(self.filePath):
+                return
+            with open(self.filePath, "r") as config:
+                self.data = json.load(config)
+                if self.data and len(self.data) > 0:
+                    self.style = list(self.data.keys())[0]
+                elif not self.data:
+                    self.data = {}
+
+        def writeConfig(self) -> None:
+            with open(self.filePath, "w") as config:
+                json.dump(self.data, config, ensure_ascii = False)
+
     class QHotbarCategory(QFrame):
 
         def __init__(self, parent: QWidget, title: str) -> None:
@@ -77,13 +109,13 @@ class QHotbar(QFrame):
         
         def addWidget(self, widget: QWidget) -> None:
             column = self.layout().count() - 1
-            self.layout().addWidget(widget, 0, column)
+            self.layout().addWidget(widget, 0, column, Qt.AlignmentFlag.AlignHCenter)
         
         def addWidgets(self, widgets: typing.Iterable[QWidget]) -> None:
             for widget in widgets:
                 self.addWidget(widget)
     
-    def __init__(self, parent: QWidget, binder: QBinder) -> None:
+    def __init__(self, parent: QWidget, binder: QBinder, styleMode = False) -> None:
         super().__init__(parent)
 
         self.setFixedHeight(76)
@@ -100,8 +132,11 @@ class QHotbar(QFrame):
         self.setupFormatCategory()
         self.setupColorCategory()
         self.setupAlignCategory()
-        self.setupInsertionCategory()
+        if not styleMode:
+            self.setupInsertionCategory()
         self.setupParagraphCategory()
+        if not styleMode:
+            self.setupStyleCategory()
 
         QWidgetUtility.addHorizontalSpacer(self)
     
@@ -302,6 +337,23 @@ class QHotbar(QFrame):
         
         QWidgetUtility.addVerticalSeparator(widget = self, height = 62)
     
+    def setupStyleCategory(self) -> None:
+        category = QHotbar.QHotbarCategory(parent = self, title = "Стиль")
+
+        styleButton = QHotbar.QHotbarStyleButton(parent = category,
+            icon = QResourceProvider.getIcon(QIcons.STYLE))
+        QWidgetUtility.setButtonParameters(styleButton, width = 28, height = 28,
+            iconWidth = 22, iconHeight = 22)
+        styleButton.clicked.connect(self.handleStyleButtonClick)
+        category.styleButton = styleButton
+
+        category.addWidget(styleButton)
+
+        self.layout().addWidget(category)
+        self.styleCategory = category
+        
+        QWidgetUtility.addVerticalSeparator(widget = self, height = 62)
+    
     def handleTextColorButtonClick(self) -> None:
         self.binder.textColorBinding.emit(
             self.colorCategory.textColorButton.color)
@@ -322,3 +374,10 @@ class QHotbar(QFrame):
         for button in self.alignmentCategory.group.buttons():
             if button.alignment == alignment:
                 button.setChecked(True)
+    
+    def handleStyleButtonClick(self) -> None:
+        style = self.styleCategory.styleButton.style
+        if style:
+            self.binder.applyStyleBinding.emit(self.styleCategory.styleButton.data[style])
+        else:
+            self.binder.applyStyleBinding.emit({})

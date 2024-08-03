@@ -1,4 +1,5 @@
-from PyQt6.QtWidgets import QDialog, QFileDialog, QFrame, QLabel, QPushButton, QLineEdit, QSpinBox, QColorDialog
+from PyQt6.QtWidgets import (QDialog, QFileDialog, QFrame, QLabel, QPushButton,
+    QLineEdit, QSpinBox, QColorDialog, QListWidget)
 from PyQt6.QtGui import QColor, QIcon
 from PyQt6.QtCore import Qt, QSize
 from resources.QIcons import QIcons
@@ -168,6 +169,86 @@ class QDialogService:
         
         def getResult(self) -> int:
             return self.inputSpinBox.value()
+    
+    class QStyleEditorDialog(QDialog):
+
+        def __init__(self, style: dict) -> None:
+            super().__init__()
+
+            self.style = style
+
+            self.setWindowIcon(QResourceProvider.getIcon(QIcons.LOGO))
+            self.setWindowTitle("Редактор стиля")
+        
+    class QStyleListDialog(QDialog):
+
+        def __init__(self, data: dict, style: str) -> None:
+            super().__init__()
+
+            self.data = data
+
+            self.setWindowIcon(QResourceProvider.getIcon(QIcons.LOGO))
+            self.setWindowTitle("Стили")
+
+            self.setFixedSize(346, 269)
+            self.setStyleSheet(QResourceProvider.getStyleSheet("style_list_dialog"))
+
+            self.listWidget = QListWidget(self)
+            self.listWidget.setGeometry(64, 20, 256, 192)
+
+            i = 0
+            for key in data.keys():
+                self.listWidget.addItem(key)
+                if key == style:
+                    self.listWidget.setCurrentRow(i)
+                i += 1
+
+            self.addButton = QPushButton(parent = self,
+                icon = QResourceProvider.getIcon(QIcons.PLUS))
+            self.addButton.setProperty("control_button", True)
+            self.addButton.setGeometry(26, 20, 28, 28)
+            self.addButton.clicked.connect(self.createStyle)
+
+            self.editButton = QPushButton(parent = self,
+                icon = QResourceProvider.getIcon(QIcons.PENCIL))
+            self.editButton.setProperty("control_button", True)
+            self.editButton.setGeometry(26, 60, 28, 28)
+            self.editButton.clicked.connect(self.editStyle)
+            
+            self.removeButton = QPushButton(parent = self,
+                icon = QResourceProvider.getIcon(QIcons.REMOVE))
+            self.removeButton.setProperty("control_button", True)
+            self.removeButton.setGeometry(26, 100, 28, 28)
+            self.removeButton.clicked.connect(self.removeStyle)
+
+            self.decoration = QFrame(self)
+            self.decoration.setObjectName("decoration")
+            self.decoration.setGeometry(0, 224, 346, 45)
+
+            self.acceptButton = QPushButton(parent = self, text = "Применить")
+            self.acceptButton.setProperty("modal_button", True)
+            self.acceptButton.setGeometry(230, 235, 91, 24)
+            self.acceptButton.clicked.connect(
+                lambda: self.done(QDialogService.Response.ACCEPT.value))
+            
+        def createStyle(self) -> None:
+            pass
+        
+        def editStyle(self) -> None:
+            pass
+        
+        def removeStyle(self) -> None:
+            item = self.listWidget.item(self.listWidget.currentRow())
+            if item:
+                self.data.pop(item.text())
+                self.listWidget.takeItem(self.listWidget.row(item))
+    
+        def getResult(self) -> str:
+            item = self.listWidget.item(self.listWidget.currentRow())
+            if item:
+                return item.text()
+            else:
+                return ''
 
     @staticmethod
     def getCriticalSavingResponse() -> int:
@@ -211,7 +292,12 @@ class QDialogService:
         code = dialog.exec()
         return None if code != QDialogService.Response.ACCEPT else dialog.getResult()
     
-    def getIntegerValue(value : int = 0):
+    def getIntegerValue(value: int = 0):
         dialog = QDialogService.QIntegerInputDialog(value = value)
         code = dialog.exec()
         return None if code != QDialogService.Response.ACCEPT else dialog.getResult()
+    
+    def getStyle(data: dict, style: str) -> str:
+        dialog = QDialogService.QStyleListDialog(data = data, style = style)
+        dialog.exec()
+        return dialog.getResult()

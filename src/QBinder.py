@@ -47,6 +47,8 @@ class QBinder(QObject):
     hotbarStrikeoutBinding = pyqtSignal(bool)
     cursorStrikeoutBinding = pyqtSignal(bool)
 
+    resetFormatBinding = pyqtSignal()
+
     textColorBinding = pyqtSignal(QColor)
     bgColorBinding = pyqtSignal(QColor)
 
@@ -62,6 +64,6 @@ class QBinder(QObject):
     hotbarSpacingBinding = pyqtSignal(int)
     cursorSpacingBinding = pyqtSignal(int)
 
-    resetFormatBinding = pyqtSignal()
+    applyStyleBinding = pyqtSignal(dict)
 
     documentUpdatedBinding = pyqtSignal(QDocument)

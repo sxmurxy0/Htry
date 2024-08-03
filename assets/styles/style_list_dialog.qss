@@ -1,0 +1,20 @@
+QListWidget {
+    font-size: 10.5pt;
+    background-color: #ffffff;
+    border: 1px solid #e6e3ed;
+}
+
+QListWidget::item:selected {
+    background-color: #eeeeef;
+    border: none;
+}
+
+QPushButton[control_button = true] {
+    background-color: transparent;
+	border-radius: 5px;
+	padding: 0px;
+}
+
+QPushButton[control_button = true]:hover {
+	background-color: #ececec;
+}

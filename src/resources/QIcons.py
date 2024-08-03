@@ -30,4 +30,8 @@ class QIcons(StrEnum):
     IMAGE = "image.png"
     LINK = "link.png"
     ERASER = "eraser.png"
+    STYLE = "style.png"
+    PLUS = "plus.png"
+    PENCIL = "pencil.png"
+    REMOVE = "remove.png"
     CRITICAL = "critical.png"
